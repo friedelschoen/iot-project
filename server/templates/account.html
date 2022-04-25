@@ -4,7 +4,7 @@
     <div class="media">
         <img class="rounded-circle account-img" src="{{ image_file }}">
         <div class="media-body">
-            <h2 class="account-heading">{{ current_user.username }}</h2>
+            <h2 class="account-heading">{{ current_user.name }}</h2>
             <p class="text-secondary">{{ current_user.email }}</p>
         </div>
     </div>
@@ -13,17 +13,17 @@
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Informatie</legend>
             <div class="form-group">
-                {{ form.username.label(class="form-control-label") }}
+                {{ form.name.label(class="form-control-label") }}
 
-                {% if form.username.errors %}
-                {{ form.username(class="form-control form-control-lg is-invalid") }}
+                {% if form.name.errors %}
+                {{ form.name(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.username.errors %}
+                    {% for error in form.name.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.username(class="form-control form-control-lg") }}
+                {{ form.name(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <div class="form-group">

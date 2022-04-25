@@ -8,15 +8,15 @@ from .models import User
 
 """ registration form for register.html """
 class RegistrationForm(FlaskForm):
-    username = StringField('Naam', validators=[ DataRequired(), Length(min=2, max=20) ])
+    name = StringField('Naam', validators=[ DataRequired(), Length(min=2, max=20) ])
     email = StringField('E-Mail', validators=[ DataRequired(), Email() ])
     password = PasswordField('Wachtwoord', validators=[ DataRequired() ])
     confirm_password = PasswordField('Wachtwoord herhalen', validators=[ DataRequired(), EqualTo('password') ])
     submit = SubmitField('Registeren')
 
-    """ validates whether username is already in use """
-    def validate_username(self, username):
-        if User.query.filter_by(name=username.data).first():
+    """ validates whether name is already in use """
+    def validate_name(self, name):
+        if User.query.filter_by(name=name.data).first():
             raise ValidationError('Deze gebruikersnaam bestaat al, kies een andere.')
 
     """ validates whether e-mail is already in use """
@@ -35,16 +35,16 @@ class LoginForm(FlaskForm):
 
 """ update account form for account.html """
 class UpdateAccountForm(FlaskForm):
-    username = StringField('Naam', validators=[ DataRequired(), Length(min=2, max=20) ])
+    name = StringField('Naam', validators=[ DataRequired(), Length(min=2, max=20) ])
     email = StringField('E-Mail', validators=[ DataRequired(), Email() ])
     password = PasswordField('Wachtwoord', validators=[])
     confirm_password = PasswordField('Wachtwoord herhalen', validators=[ EqualTo('password') ])
     picture = FileField('Profielfoto bewerken', validators=[ FileAllowed(['jpg', 'png']) ])
     submit = SubmitField('Bewerken')
 
-    """ validates whether username is already in use """
-    def validate_username(self, username):
-        if username.data != current_user.name and User.query.filter_by(username=username.data).first():
+    """ validates whether name is already in use """
+    def validate_name(self, name):
+        if name.data != current_user.name and User.query.filter_by(name=name.data).first():
             raise ValidationError('Deze gebruikersnaam bestaat al, kies een andere.')
 
     """ validates whether e-mail is already in use """

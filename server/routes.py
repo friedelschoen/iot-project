@@ -8,7 +8,7 @@ from calendar import Calendar as Month
 from datetime import datetime
 
 from .app import app, bcrypt, db
-from .forms import LoginForm, NewCourseForm, AdminForm, RegistrationForm, SearchForm, SubscribeForm, UnsubscribeForm, UpdateAccountForm
+from .forms import LoginForm, RegistrationForm, UpdateAccountForm
 from .models import User
 
 
@@ -31,7 +31,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(name=form.username.data, email=form.email.data, password=hashed_password)
+        user = User(name=form.name.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         flash('Uw profiel werd toegevoegd! U kan nu inloggen.', 'success')
@@ -83,7 +83,7 @@ def save_picture(form_picture):
 def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
-        current_user.name = form.username.data
+        current_user.name = form.name.data
         current_user.email = form.email.data
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
@@ -94,7 +94,7 @@ def account():
         flash('Uw profiel is bewerkt!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
-        form.username.data = current_user.name
+        form.name.data = current_user.name
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html',  title='Profiel', image_file=image_file, form=form)

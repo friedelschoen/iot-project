@@ -12,9 +12,9 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='openmoji/openmoji.css') }}">
 
     {% if title %}
-    <title>Programmeerles voor ouderen - {{ title }}</title>
+    <title>muizenval.io - {{ title }}</title>
     {% else %}
-    <title>Programmeerles voor ouderen</title>
+    <title>muizenval.io</title>
     {% endif %}
 </head>
 
@@ -22,7 +22,9 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
             <div class="container">
-                <a class="navbar-brand mr-4" href="/">Programmeerles voor ouderen</a>
+                <a class="navbar-brand mr-4" href="/">
+                    <code>muizenval.io</code>
+                </a>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav mr-auto">
                         <a class="nav-item nav-link" href="{{ url_for('about') }}">Over ons</a>
@@ -56,7 +58,7 @@
             </div>
             <div class="col-md-4">
                 <div class="content-section">
-                    <h3>Welkom <b>{{ current_user.username if current_user.is_authenticated else 'gast' }}</b>!</h3>
+                    <h3>Welkom <b>{{ current_user.name if current_user.is_authenticated else 'gast' }}</b>!</h3>
                     {% if current_user.is_authenticated %}
                     <p class='text-muted'>
                     <ul class="list-group">
@@ -73,6 +75,7 @@
                     </ul>
                     </p>
                     {% endif %}
+                    {#
                     {% if current_user.is_authenticated %}
                     <table class='calendar'>
                         <tr>
@@ -91,7 +94,7 @@
                         </tr>
                         {% endfor %}
                     </table>
-                    {% endif %}
+                    {% endif %}#}
                 </div>
             </div>
         </div>

@@ -19,7 +19,7 @@
         <p>
             wordt gegeven door
             {% for teacher in teachers if teacher.id == course.teacher_id %}
-            {{ teacher.username }},
+            {{ teacher.name }},
             {% endfor %}
         </p>
         <p>
