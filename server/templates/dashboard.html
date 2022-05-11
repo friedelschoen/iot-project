@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<article class="media content-section">
+	<div class="media-body">
+		<h2>Dit zijn uw muizenvallen</h2>
+		<p>
+			Klik op de titel van een muizenval om de instellingen in te zien!
+		</p>
+	</div>
+</article>
+{% for home, trap in traps %}
+<article class="media content-section">
+	<div class="media-body">
+		<h3><a class="article-title" href="#">
+				{% if trap.name %}
+				{{ trap.name }} <sub><code>{{ trap.mac }}</code></sub>
+				{% else %}
+				<code>{{ trap.mac }}</code>
+				{% endif %}
+			</a></h3>
+		<p>
+			{{ home.adress }}
+		</p>
+		<p>
+			{% if trap.caught %}
+			<b>(geactiveerd)</b>
+			{% endif %}
+		</p>
+	</div>
+</article>
+{% endfor %}
+{% endblock content %}

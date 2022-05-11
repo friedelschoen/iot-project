@@ -1,3 +1,4 @@
+from operator import or_
 import os
 import secrets
 
@@ -9,7 +10,7 @@ from datetime import datetime
 
 from .app import app, bcrypt, db
 from .forms import LoginForm, RegistrationForm, UpdateAccountForm
-from .models import User
+from .models import Home, Trap, User
 
 
 """ index.html (home-page) route """
@@ -99,6 +100,15 @@ def account():
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html',  title='Profiel', image_file=image_file, form=form)
 
+@app.route('/dashboard')
+@login_required
+def dashboard():    
+    traps = []
+    for home in Home.query.filter((Home.owner == current_user.id) | (Home.catcher == current_user.id)):
+        for trap in Trap.query.filter_by(home=home.id):
+           traps.append((home, trap))
+    print(traps)
+    return render_template('dashboard.html', title='Dashboard', traps=traps)
 
 """ 404 not found handler """
 @app.errorhandler(404)

@@ -22,11 +22,15 @@ class Home(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     owner = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     catcher = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    adress = db.Column(db.Text, nullable=False)
+    street = db.Column(db.Text, nullable=False)
+    number = db.Column(db.Integer, nullable=False)
+    zipcode = db.Column(db.Text, nullable=False)
+    place = db.Column(db.Text, nullable=False)
 
 class Trap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mac = db.Column(db.String(16), unique=True, nullable=False)
+    name = db.Column(db.Text)
     home = db.Column(db.Integer, db.ForeignKey('home.id'), nullable=False)
     last_heartbeat = db.Column(db.Integer, nullable=True, default=0)
     caught = db.Column(db.Boolean, nullable=False, default=False)

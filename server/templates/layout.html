@@ -9,7 +9,6 @@
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='openmoji/openmoji.css') }}">
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,7 +85,7 @@
                         </li>
                         {% if current_user.type in [ 'client', 'catcher' ] %}
                         <li class="list-group-item list-group-item-light">
-                            <a href="#">Uw muizenvallen</a>
+                            <a href="{{ url_for('dashboard') }}">Uw muizenvallen</a>
                         </li>
                         {% endif %}
                         {% if current_user.type == 'catcher' %}
