@@ -6,7 +6,7 @@ Dit is een dev-server, dus run je met `debug=True`-flag!
 
 **Deze repository clonen:**
 ```
-$ git clone https://github.com/friedelschoen/iot-project
+$ git clone https://github.com/friedelschoen/muizenval.io/
 ```
 
 **Alle afhankelijkheden installeren:**

@@ -11,6 +11,12 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='openmoji/openmoji.css') }}">
 
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&family=Source+Sans+Pro:ital,wght@0,400;0,600;1,400;1,600&display=swap"
+        rel="stylesheet">
     {% if title %}
     <title>muizenval.io - {{ title }}</title>
     {% else %}
@@ -20,7 +26,7 @@
 
 <body>
     <header class="site-header">
-        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <nav class="navbar navbar-expand-md fixed-top">
             <div class="container">
                 <a class="navbar-brand mr-4" href="/">
                     <code>muizenval.io</code>
@@ -59,42 +65,46 @@
             <div class="col-md-4">
                 <div class="content-section">
                     <h3>Welkom <b>{{ current_user.name if current_user.is_authenticated else 'gast' }}</b>!</h3>
-                    {% if current_user.is_authenticated %}
+                    {% if not current_user.is_authenticated %}
+                    <p>
+                        Hallo! Jij bent nog niet ingelogd. Heb jij al een account moet jij bovenrechts op inloggen
+                        klikken.
+                    </p>
+                    <p>
+                        Heb jij al onze producten gekocht maar jij hebt nog geen account? Je kan makkelijk een account
+                        registreren en je muizenvallen inschrijven!
+                    </p>
+                    <p>
+                        Jij bent nieuw en wilt ons producten kopen of testen? Ga naar ons shop om onze aanbiedingen in
+                        te kunnen zien.
+                    </p>
+                    {% else %}
                     <p class='text-muted'>
                     <ul class="list-group">
-                        <li class="list-group-item list-group-item-light"><a
-                                href="{{ url_for('account') }}">Instellingen</a></li>
-                        {% if current_user.type == 'teacher' or current_user.type == 'admin' %}
-                        <li class="list-group-item list-group-item-light"><a
-                                href="{{ url_for('course_overview') }}">Lesoverzicht</a></li>
+                        <li class="list-group-item list-group-item-light">
+                            <a href="{{ url_for('account') }}">Profielinstellingen</a>
+                        </li>
+                        {% if current_user.type in [ 'client', 'catcher' ] %}
+                        <li class="list-group-item list-group-item-light">
+                            <a href="#">Uw muizenvallen</a>
+                        </li>
+                        {% endif %}
+                        {% if current_user.type == 'catcher' %}
+                        <li class="list-group-item list-group-item-light">
+                            <a href="#">Uw cli&euml;nten</a>
+                        </li>
                         {% endif %}
                         {% if current_user.type == 'admin' %}
-                        <li class="list-group-item list-group-item-light"><a href="{{ url_for('admin') }}">Profielen
-                                bewerken</a></li>
+                        <li class="list-group-item list-group-item-light">
+                            <a href="#">Gebruikers bewerken</a>
+                        </li>
+                        <li class="list-group-item list-group-item-light">
+                            <a href="#">Statusaanvragen</a>
+                        </li>
                         {% endif %}
                     </ul>
                     </p>
                     {% endif %}
-                    {#
-                    {% if current_user.is_authenticated %}
-                    <table class='calendar'>
-                        <tr>
-                            {% for d, day in calendar['weekdays'] %}
-                            <th class="{{ 'weekend' if d >= 5 }}">{{ day }}</th>
-                            {% endfor %}
-                        </tr>
-                        {% for row in calendar['rows'] %}
-                        <tr>
-                            {% for d, day, course in row %}
-                            <td class="{{ 'weekend' if d >= 5 }} {{ 'course' if course and day }}">
-                                {{ day if day }}
-                                {% if course %}<span class='hover-day'>{{ course }}</span>{% endif %}
-                            </td>
-                            {% endfor %}
-                        </tr>
-                        {% endfor %}
-                    </table>
-                    {% endif %}#}
                 </div>
             </div>
         </div>

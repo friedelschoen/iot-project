@@ -12,7 +12,7 @@ def load_user(user_id):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(7), nullable=False, default="client") # client, catcher, admin
+    type = db.Column(db.String(7), nullable=False, default="guest") # guest, client, catcher, admin
     email = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
