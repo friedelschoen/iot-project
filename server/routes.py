@@ -10,7 +10,7 @@ from datetime import datetime
 
 from .app import app, bcrypt, db
 from .forms import LoginForm, RegistrationForm, UpdateAccountForm
-from .models import Home, Trap, User
+from .models import Trap, User
 
 
 """ index.html (home-page) route """
@@ -103,11 +103,10 @@ def account():
 @app.route('/dashboard')
 @login_required
 def dashboard():    
-    traps = []
-    for home in Home.query.filter((Home.owner == current_user.id) | (Home.catcher == current_user.id)):
-        for trap in Trap.query.filter_by(home=home.id):
-           traps.append((home, trap))
-    print(traps)
+    query = [ current_user ] if current_user.type == 'client' else User.query.filter_by(catcher=current_user.id)
+    
+    traps = [ trap for user in query for trap in Trap.query.filter_by(owner=user.id) ]
+
     return render_template('dashboard.html', title='Dashboard', traps=traps)
 
 """ 404 not found handler """

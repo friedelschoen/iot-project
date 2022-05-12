@@ -2,7 +2,7 @@
 {% block content %}
 <article class="media content-section">
 	<div class="media-body">
-		<h2>Dit zijn uw muizenvallen</h2>
+		<h2><b>Dit zijn uw muizenvallen</b></h2>
 		<p>
 			Klik op de titel van een muizenval om de instellingen in te zien!
 		</p>
@@ -12,19 +12,32 @@
 <article class="media content-section">
 	<div class="media-body">
 		<h3><a class="article-title" href="#">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="{{ trap.status_color() }}"
+					class="bi bi-circle-fill" viewBox="0 0 20 20">
+					<circle cx="10" cy="10" r="10" />
+				</svg>
+				-
 				{% if trap.name %}
-				{{ trap.name }} <sub><code>{{ trap.mac }}</code></sub>
+				{{ trap.name }}
 				{% else %}
-				<code>{{ trap.mac }}</code>
+				<code>[{{ trap.pretty_mac() }}]</code>
 				{% endif %}
-			</a></h3>
+				<small>van {{ home.owner_class().name }}</small>
+			</a>
+		</h3>
+		{% if trap.name %}
 		<p>
-			{{ home.adress }}
+			<code>[{{ trap.pretty_mac() }}]</code>
+		</p>
+		{% endif %}
+		<p>
+			onderhouden door <b>{{ home.catcher_class().name }}</b>
 		</p>
 		<p>
-			{% if trap.caught %}
-			<b>(geactiveerd)</b>
-			{% endif %}
+			<a class="article-title" href="#">
+				{{ home.street }} {{ home.number }}<br>
+				{{ home.zipcode }} {{ home.place }}
+			</a>
 		</p>
 	</div>
 </article>

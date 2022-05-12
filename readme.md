@@ -1,5 +1,7 @@
 # REPOSITORY VOOR ONS IOT-PROJECT (5GRONINGEN)
 
+> Hamdi Hassan, Loes Hoogstra, Gerco van Woudenberg, Friedel Schon
+
 ## De server runnen
 
 Dit is een dev-server, dus run je met `debug=True`-flag!
