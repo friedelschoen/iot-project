@@ -10,10 +10,11 @@ def load_user(user_id):
 
 
 class UserType(Enum):
-    administrator = 0
-    technician = 1
-    catcher = 2
-    user = 3
+    ADMIN = 0
+    MANAGER = 1
+    TECHNICIAN = 2
+    CATCHER = 3
+    CLIENT = 4
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)

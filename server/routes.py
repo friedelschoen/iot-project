@@ -10,7 +10,7 @@ from datetime import datetime
 
 from .app import app, bcrypt, db
 from .forms import LoginForm, RegistrationForm, UpdateAccountForm
-from .models import Trap, User
+from .models import Trap, User, UserType
 
 
 """ index.html (home-page) route """
@@ -102,8 +102,10 @@ def account():
 
 @app.route('/dashboard')
 @login_required
-def dashboard():    
-    query = [ current_user ] if current_user.type == 'client' else User.query.filter_by(catcher=current_user.id)
+def dashboard():
+    query = [ current_user ]
+    if current_user.type == UserType.CATCHER:
+        query += list(User.query.filter_by(catcher=current_user.id))
     
     traps = [ trap for user in query for trap in Trap.query.filter_by(owner=user.id) ]
 
