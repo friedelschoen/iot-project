@@ -80,11 +80,11 @@
                         <li class="list-group-item list-group-item-light">
                             <a href="{{ url_for('account') }}">Profielinstellingen</a>
                         </li>
-                        {% if current_user.type in [ 'client', 'catcher' ] %}
+                        {#} {% if current_user.type in [ 'client', 'catcher' ] %}{#}
                         <li class="list-group-item list-group-item-light">
-                            <a href="{{ url_for('dashboard') }}">Uw muizenvallen</a>
+                            <a href="{{ url_for('traps') }}">Uw muizenvallen</a>
                         </li>
-                        {% endif %}
+                        {#}{% endif %}{#}
                         {% if current_user.type == 'catcher' %}
                         <li class="list-group-item list-group-item-light">
                             <a href="#">Uw cli&euml;nten</a>
@@ -102,10 +102,10 @@
                     </p>
                     {% endif %}
                 </div>
+                {% with contact = current_user.contact_class() %}
+                {% if contact %}
                 <div class="content-section">
                     <h3>Contact</h3>
-                    {% if current_user.type.name == 'CLIENT' %}
-                    {% with contact = current_user.contact_class() %}
                     <h5>
                         <b>{{ contact.name }}</b>
                     </h5>
@@ -118,9 +118,9 @@
                         {{ contact.address | replace('\n', '<br>') }}<br>
                         {% endautoescape %}
                     </p>
-                    {% endwith %}
-                    {% endif %}
                 </div>
+                {% endif %}
+                {% endwith %}
             </div>
         </div>
     </main>

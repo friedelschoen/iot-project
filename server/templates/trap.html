@@ -3,16 +3,41 @@
 {% for trap in traps %}
 <article class="media content-section">
     <div class="media-body">
-        <h2><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{url_for('trapform', trap_id=trap.mac)}}">bewerken</a></h2>
-        <h2><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{url_for('delete_trap', trap_id=trap.mac)}}">verwijderen</a></h2>
-                <h3>Naam: {{ trap.name }}</h3>
-                <p> Mac adres: {{ trap.mac }} </p>
-                {% if trap.caught %}
-                <p> Status: Gevangen! </p>
+        <p>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1"
+                href="{{url_for('trap_update', trap_id=trap.mac)}}">Bewerken</a>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1"
+                href="{{url_for('trap_delete', trap_id=trap.mac)}}">Verwijderen</a>
+        </p>
+        <h3><a class="article-title" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="{{ trap.status_color() }}"
+                    class="bi bi-circle-fill" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="10" />
+                </svg>
+                -
+                {% if trap.name %}
+                {{ trap.name }}
                 {% else %}
-                <p>Status: Leeg!</p>
-                {% endif %} 
+                <code>[{{ trap.pretty_mac() }}]</code>
+                {% endif %}
+            </a>
+        </h3>
+        {% if trap.name %}
+        <p>
+            <code>[{{ trap.pretty_mac() }}]</code>
+        </p>
+        {% endif %}
     </div>
+
+    {#} <div class="media-body">
+        <h3>Naam: {{ trap.name }}</h3>
+        <p> Mac adres: {{ trap.mac }} </p>
+        {% if trap.caught %}
+        <p> Status: Gevangen! </p>
+        {% else %}
+        <p>Status: Leeg!</p>
+        {% endif %}
+    </div>{#}
 </article>
 {% endfor %}
 {% endblock content %}

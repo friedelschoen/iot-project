@@ -1,4 +1,3 @@
-from operator import or_
 import os
 import secrets
 
@@ -11,34 +10,26 @@ from .forms import LoginForm, RegistrationForm, UpdateAccountForm, UpdateTrapFor
 from .models import Trap, User, UserType
 
 @app.route("/api/update_status", methods=['POST', 'GET'])
-def my_function():
-    data = request.json  
-    status = False
-    if data:
-        if data[0] == "0":
-            status = False
-        else:
-            status = True
-        mac = data[1:]
-        val = Trap.query.filter_by(mac=mac).first() 
-        if val:
-            val.caught = status
-            db.session.commit()
-    reaction = "congrats"
-    return jsonify(reaction)
+def update_status():
+    if not request.json:
+        return jsonify({ "error": "invalid-json" })
+    val = Trap.query.filter_by(mac=request.json['mac']).first() 
+    if not val:
+        return jsonify({ "error": "not-found" })
+    val.caught = request.json['status']
+    db.session.commit()
+    return jsonify({ "error": "ok" })
 
 @app.route("/api/search_connect", methods=['POST', 'GET'])
-def my_function2():
-    data = request.json  # temperature reading
-    if data is None:
-        status = "Error"
-    elif data:
-        if not Trap.query.filter_by(mac=data).first():
-            trap = Trap(mac=data, caught=False)
-            db.session.add(trap)
-            db.session.commit()
-    reaction = data
-    return jsonify(reaction)
+def search_connect():
+    if not request.json:
+        return jsonify({ "error": "invalid-json" })
+    
+    if not Trap.query.filter_by(mac=request.json['mac']).first():
+        trap = Trap(mac=request.json['mac'], caught=False)
+        db.session.add(trap)
+        db.session.commit()
+    return jsonify({ "error": "ok" })
 
 """ index.html (home-page) route """
 @app.route("/")
@@ -140,7 +131,7 @@ def account():
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html',  title='Profiel', image_file=image_file, form=form)
 
-@app.route('/dashboard')
+"""@app.route('/dashboard')
 @login_required
 def dashboard():
     query = [ current_user ]
@@ -150,39 +141,40 @@ def dashboard():
     traps = [ trap for user in query for trap in Trap.query.filter_by(owner=user.id) ]
 
     return render_template('dashboard.html', title='Dashboard', traps=traps)
+"""
 
-@app.route('/trap')
+@app.route('/traps')
 @login_required
-def trap():
+def traps():
     traps = Trap.query.all()
-    return render_template('trap.html', traps = traps)
+    return render_template('trap.html', traps=traps)
 
-@app.route('/trap/<trap_id>', methods=['POST', 'GET'])
+@app.route('/trap/<trap_id>/update', methods=['POST', 'GET'])
 @login_required
-def trapform(trap_id):
+def trap_update(trap_id):
     form = UpdateTrapForm()
     val = Trap.query.filter_by(mac=trap_id).first()
     if form.validate_on_submit():
         val.name = form.name.data
-        email =  form.email.data
-        if email:
-            user = User.query.filter_by(email = email).first()
+        if form.email.data:
+            user = User.query.filter_by(email=form.email.data).first()
             val.owner = user.id
         db.session.commit()
-        return redirect('/trap')
+        return redirect(url_for('traps'))
     elif request.method == 'GET':
         form.mac.data = val.mac
         form.name.data = val.name
         #form.email = val.owner
     return render_template('updatetrap.html', form=form)
 
-@app.route('/trap/delete/<trap_id>')
+@app.route('/trap/<trap_id>/delete')
 @login_required
-def delete_trap(trap_id):
+def trap_delete(trap_id):
     trap = Trap.query.filter_by(mac=trap_id).first()
     db.session.delete(trap)
     db.session.commit()
-    return redirect(url_for('trap'))
+    
+    return redirect(url_for('traps'))
 
 """ 404 not found handler """
 @app.errorhandler(404)
