@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+{% for trap in traps %}
+<article class="media content-section">
+    <div class="media-body">
+        <h2><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{url_for('trapform', trap_id=trap.mac)}}">bewerken</a></h2>
+        <h2><a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{url_for('delete_trap', trap_id=trap.mac)}}">verwijderen</a></h2>
+                <h3>Naam: {{ trap.name }}</h3>
+                <p> Mac adres: {{ trap.mac }} </p>
+                {% if trap.caught %}
+                <p> Status: Gevangen! </p>
+                {% else %}
+                <p>Status: Leeg!</p>
+                {% endif %} 
+    </div>
+</article>
+{% endfor %}
+{% endblock content %}

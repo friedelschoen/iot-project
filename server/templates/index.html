@@ -2,21 +2,9 @@
 {% block content %}
 <article class="media content-section">
     <div class="media-body">
-        <h2>Dit zijn ons lessen</h2>
-        <p>
-            U kan makkelijk op de titel van een les klikken om in te schrijven!
-        </p>
+        <h2>Welkom!</h2>
+        <a class="ml-2" href="{{ url_for('trap') }}">Bekijk de vallen</a>
     </div>
 </article>
-<article class="media content-section">
-    <div class="media-body">
-        {% if status == "on" %}
-        <h1> ON!</h1>
-        {% elif status == "off" %}
-        <h1> OFF!</h1>
-        {% else %}
-        <h1> ERROR!</h1>
-        {% endif %}
-    </div>
-</article>
+
 {% endblock content %}
