@@ -38,6 +38,11 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Registeren', form=form)
 
+
+@app.route("/producten")
+def producten():
+    return render_template('producten.html')
+
 """ login.html route """
 @app.route("/login", methods=['GET', 'POST'])
 def login():
