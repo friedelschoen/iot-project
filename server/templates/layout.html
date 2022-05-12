@@ -9,7 +9,6 @@
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='openmoji/openmoji.css') }}">
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,10 +28,11 @@
         <nav class="navbar navbar-expand-md fixed-top">
             <div class="container">
                 <a class="navbar-brand mr-4" href="/">
-                    <code>muizenval.io</code>
+                    <b><code>muizenval.io</code></b>
                 </a>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav mr-auto">
+                        <a class="nav-item nav-link" href="#">Shop</a>
                         <a class="nav-item nav-link" href="{{ url_for('about') }}">Over ons</a>
                         <a class="nav-item nav-link" href="{{ url_for('producten') }}">Producten</a>
                     </div>
@@ -87,7 +87,7 @@
                         </li>
                         {% if current_user.type in [ 'client', 'catcher' ] %}
                         <li class="list-group-item list-group-item-light">
-                            <a href="#">Uw muizenvallen</a>
+                            <a href="{{ url_for('dashboard') }}">Uw muizenvallen</a>
                         </li>
                         {% endif %}
                         {% if current_user.type == 'catcher' %}

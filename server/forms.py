@@ -1,17 +1,23 @@
-from flask_login import current_user
+import re
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
-from wtforms import BooleanField, HiddenField, PasswordField, SelectField, StringField, SubmitField, TextAreaField
+from wtforms import BooleanField, HiddenField, PasswordField, SelectField, StringField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 
-from .models import User
+from .models import User, UserType
 
 """ registration form for register.html """
 class RegistrationForm(FlaskForm):
-    name = StringField('Naam', validators=[ DataRequired(), Length(min=2, max=20) ])
+    name = StringField('Naam', validators=[ DataRequired(), Length(min=5, max=20) ])
     email = StringField('E-Mail', validators=[ DataRequired(), Email() ])
     password = PasswordField('Wachtwoord', validators=[ DataRequired() ])
     confirm_password = PasswordField('Wachtwoord herhalen', validators=[ DataRequired(), EqualTo('password') ])
+    phone = StringField('Telefoon', validators=[ DataRequired(), Length(min=5) ])
+    street = StringField('Straat', validators=[ DataRequired() ])
+    housenumber = IntegerField('Huisnummer', validators=[ DataRequired() ])
+    postcode = StringField('Postcode', validators=[ DataRequired() ])
+    place = StringField('Plaats', validators=[ DataRequired() ])
+    catcher_code = StringField('VangerCode', validators=[ DataRequired(), Length(min=5, max=5) ])
     submit = SubmitField('Registeren')
 
     """ validates whether name is already in use """
@@ -22,7 +28,21 @@ class RegistrationForm(FlaskForm):
     """ validates whether e-mail is already in use """
     def validate_email(self, email):
         if User.query.filter_by(email=email.data).first():
-            raise ValidationError('Deze e-mail bestaat al, log in als dat uw e-mail is')
+            raise ValidationError('Deze e-mail bestaat al, log in als dat uw e-mail is.')
+
+    def validate_phone(self, phone):
+        for c in phone.data:
+            if c not in '0123456789 -':
+                raise ValidationError('Dit belnummer is niet geldig.')
+
+    def validate_postcode(self, code):
+        if len(code.data) != 6 or not code.data[0:4].isnumeric() or not code.data[4:6].isalpha():
+            raise ValidationError('De postcode is niet geldig.')
+
+
+    def validate_catcher_code(self, code):
+        if not User.query.filter_by(type=UserType.CATCHER, catcher_code=code.data).first():
+            raise ValidationError('De rattenvanger is niet bekennt, hebt u de code juist ingevoerd?')
 
 
 """ login form for login.html """
