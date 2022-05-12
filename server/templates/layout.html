@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
-    <!-- Google Font: Source Sans Pro -->
+    <!-- Google Font: Source Sans Pro, Source Code Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -32,7 +32,6 @@
                 </a>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav mr-auto">
-                        <a class="nav-item nav-link" href="#">Shop</a>
                         <a class="nav-item nav-link" href="{{ url_for('about') }}">Over ons</a>
                         <a class="nav-item nav-link" href="{{ url_for('producten') }}">Producten</a>
                     </div>
@@ -52,15 +51,11 @@
     <main role="main" class="container">
         <div class="row">
             <div class="col-md-8">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                {% for category, message in messages %}
+                {% for category, message in get_flashed_messages(with_categories=true) %}
                 <div class="alert alert-{{ category }}">
                     {{ message }}
                 </div>
                 {% endfor %}
-                {% endif %}
-                {% endwith %}
                 {% block content %}{% endblock %}
             </div>
             <div class="col-md-4">
@@ -105,6 +100,25 @@
                         {% endif %}
                     </ul>
                     </p>
+                    {% endif %}
+                </div>
+                <div class="content-section">
+                    <h3>Contact</h3>
+                    {% if current_user.type.name == 'CLIENT' %}
+                    {% with contact = current_user.contact_class() %}
+                    <h5>
+                        <b>{{ contact.name }}</b>
+                    </h5>
+                    <p>
+                        E-Mail: <a href="mailto:{{ contact.email }}">{{ contact.email }}</a><br>
+                        Tel.: {{ contact.phone }}
+                    </p>
+                    <p>
+                        {% autoescape false %}
+                        {{ contact.address | replace('\n', '<br>') }}<br>
+                        {% endautoescape %}
+                    </p>
+                    {% endwith %}
                     {% endif %}
                 </div>
             </div>

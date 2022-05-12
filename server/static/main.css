@@ -16,13 +16,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 nav {
-/*  background-color: #33bc85; */
+  /*2a4b98, 2a4583
+  2a9a6d, 2a825f
+  h: 156*/
+
 background: repeating-linear-gradient(
   45deg,
-  #33bc85,
-  #33bc85 10px,
-  #2a825f 10px,
-  #2a825f 20px
+  hsl(156, 57%, 38%),
+  hsl(156, 57%, 38%) 10px,
+  hsl(156, 51%, 34%) 10px,
+  hsl(156, 51%, 34%) 20px
 );
 color: #fff;
 font-size: 15pt;

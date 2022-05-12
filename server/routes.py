@@ -5,8 +5,6 @@ import secrets
 from flask import flash, redirect, render_template, request, url_for, abort, request, jsonify
 from flask_login import current_user, login_required, login_user, logout_user
 from PIL import Image
-from calendar import Calendar as Month
-from datetime import datetime
 
 from .app import app, bcrypt, db
 from .forms import LoginForm, RegistrationForm, UpdateAccountForm
@@ -132,6 +130,7 @@ def account():
         db.session.commit()
         flash('Uw profiel is bewerkt!', 'success')
         return redirect(url_for('account'))
+
     elif request.method == 'GET':
         form.name.data = current_user.name
         form.email.data = current_user.email
@@ -143,7 +142,7 @@ def account():
 def dashboard():
     query = [ current_user ]
     if current_user.type == UserType.CATCHER:
-        query += list(User.query.filter_by(catcher=current_user.id))
+        query += list(User.query.filter_by(contact=current_user.id))
     
     traps = [ trap for user in query for trap in Trap.query.filter_by(owner=user.id) ]
 

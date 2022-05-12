@@ -4,7 +4,7 @@ from flask_wtf.file import FileAllowed, FileField
 from wtforms import BooleanField, HiddenField, PasswordField, SelectField, StringField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 
-from .models import User, UserType
+from .models import User
 
 """ registration form for register.html """
 class RegistrationForm(FlaskForm):
@@ -32,13 +32,12 @@ class RegistrationForm(FlaskForm):
 
     def validate_phone(self, phone):
         for c in phone.data:
-            if c not in '0123456789 -':
+            if c not in '0123456789- ':
                 raise ValidationError('Dit belnummer is niet geldig.')
 
     def validate_postcode(self, code):
         if len(code.data) != 6 or not code.data[0:4].isnumeric() or not code.data[4:6].isalpha():
             raise ValidationError('De postcode is niet geldig.')
-
 
     def validate_catcher_code(self, code):
         pass

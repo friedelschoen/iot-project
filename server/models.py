@@ -9,7 +9,6 @@ from .app import db, login_manager
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
 class UserType(Enum):
     ADMIN = 0
     MANAGER = 1
@@ -27,9 +26,11 @@ class User(db.Model, UserMixin):
     phone = db.Column(db.Text, nullable=False)
     address = db.Column(db.Text)
 
-    manager = db.Column(db.Integer, db.ForeignKey('user.id')) # set if technician, catcher, user
+    contact = db.Column(db.Integer, db.ForeignKey('user.id')) # set if technician, catcher, user
     catcher_code = db.Column(db.String(5)) # set if catcher 
-    catcher = db.Column(db.Integer, db.ForeignKey('user.id')) # set if user
+
+    def contact_class(self):
+        return User.query.filter_by(id=self.contact).first()
 
 
 class Trap(db.Model):
