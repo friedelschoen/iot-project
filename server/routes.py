@@ -2,7 +2,7 @@ from operator import or_
 import os
 import secrets
 
-from flask import flash, redirect, render_template, request, url_for, abort
+from flask import flash, redirect, render_template, request, url_for, abort, request, jsonify
 from flask_login import current_user, login_required, login_user, logout_user
 from PIL import Image
 from calendar import Calendar as Month
@@ -12,11 +12,37 @@ from .app import app, bcrypt, db
 from .forms import LoginForm, RegistrationForm, UpdateAccountForm
 from .models import Trap, User, UserType
 
+status = None
+
+@app.route("/api/update_status", methods=['POST', 'GET'])
+def my_function():
+    data = request.json  
+    global status
+    if data is None:
+        status = "Error"
+    elif data:
+        status = "on"
+    else:
+        status = "off"
+    reaction = "congrats"
+    return jsonify(reaction)
+
+@app.route("/api/search_connect", methods=['POST', 'GET'])
+def my_function2():
+    data = request.json  # temperature reading
+    if data is None:
+        status = "Error"
+    elif data:
+        status = "on"
+    else:
+        status = "off"
+    reaction = data
+    return jsonify(reaction)
 
 """ index.html (home-page) route """
 @app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template('index.html', status = status)
 
 """ about.html route """
 @app.route("/about")
