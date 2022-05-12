@@ -1,3 +1,4 @@
+from email.policy import default
 from enum import Enum
 from flask_login import UserMixin
 
@@ -18,7 +19,7 @@ class UserType(Enum):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.Enum(UserType))
+    type = db.Column(db.Enum(UserType), nullable=False, default=UserType.CLIENT)
     email = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
@@ -32,12 +33,12 @@ class User(db.Model, UserMixin):
 
 
 class Trap(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    mac = db.Column(db.String(16), unique=True, nullable=False)
+    mac = db.Column(db.String(16), primary_key=True, nullable=False)
     name = db.Column(db.Text)
-    owner = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     last_heartbeat = db.Column(db.DateTime, nullable=True, default=0)
-    caught = db.Column(db.Boolean, nullable=False, default=False)
+    caught = db.Column(db.Boolean, nullable=False, default=False)  
+    owner = db.Column(db.Integer, db.ForeignKey('user.id'))
+    connect_expired = db.Column(db.DateTime)
 
     def pretty_mac(self):
         upper = self.mac.upper()

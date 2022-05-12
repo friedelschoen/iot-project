@@ -58,7 +58,14 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(name=form.name.data, email=form.email.data, password=hashed_password)
+        address = f"{form.street} {form.housenumber}\n{form.postcode} {form.place}"
+        user = User(
+            name=form.name.data, 
+            email=form.email.data, 
+            password=hashed_password,
+            phone=form.phone.data,
+            address = address
+        )
         db.session.add(user)
         db.session.commit()
         flash('Uw profiel werd toegevoegd! U kan nu inloggen.', 'success')

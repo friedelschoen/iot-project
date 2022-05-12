@@ -41,8 +41,9 @@ class RegistrationForm(FlaskForm):
 
 
     def validate_catcher_code(self, code):
-        if not User.query.filter_by(type=UserType.CATCHER, catcher_code=code.data).first():
-            raise ValidationError('De rattenvanger is niet bekennt, hebt u de code juist ingevoerd?')
+        pass
+        #if not User.query.filter_by(type=UserType.CATCHER, catcher_code=code.data).first():
+        #    raise ValidationError('De rattenvanger is niet bekennt, hebt u de code juist ingevoerd?')
 
 
 """ login form for login.html """
