@@ -1,7 +1,8 @@
 import re
+from tokenize import String
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
-from wtforms import BooleanField, HiddenField, PasswordField, SelectField, StringField, SubmitField, IntegerField
+from wtforms import BooleanField, HiddenField, PasswordField, StringField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 
 from .models import User, UserType
@@ -72,3 +73,9 @@ class UpdateAccountForm(FlaskForm):
     def validate_email(self, email):
         if email.data != current_user.email and User.query.filter_by(email=email.data).first():
             raise ValidationError('Deze e-mail bestaat al, log in als dat uw e-mail is')
+
+class UpdateTrapForm(FlaskForm):
+    mac = StringField('Mac-Adres', validators=[ Length(min=16, max=16) ])
+    name = StringField('Naam')
+    email = StringField('E-mail')
+    submit = SubmitField('Bewerken')

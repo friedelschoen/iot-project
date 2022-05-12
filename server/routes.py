@@ -9,21 +9,23 @@ from calendar import Calendar as Month
 from datetime import datetime
 
 from .app import app, bcrypt, db
-from .forms import LoginForm, RegistrationForm, UpdateAccountForm
+from .forms import LoginForm, RegistrationForm, UpdateAccountForm, UpdateTrapForm
 from .models import Trap, User, UserType
-
-status = None
 
 @app.route("/api/update_status", methods=['POST', 'GET'])
 def my_function():
     data = request.json  
-    global status
-    if data is None:
-        status = "Error"
-    elif data:
-        status = "on"
-    else:
-        status = "off"
+    status = False
+    if data:
+        if data[0] == "0":
+            status = False
+        else:
+            status = True
+        mac = data[1:]
+        val = Trap.query.filter_by(mac=mac).first() 
+        if val:
+            val.caught = status
+            db.session.commit()
     reaction = "congrats"
     return jsonify(reaction)
 
@@ -33,16 +35,17 @@ def my_function2():
     if data is None:
         status = "Error"
     elif data:
-        status = "on"
-    else:
-        status = "off"
+        if not Trap.query.filter_by(mac=data).first():
+            trap = Trap(mac=data, caught=False)
+            db.session.add(trap)
+            db.session.commit()
     reaction = data
     return jsonify(reaction)
 
 """ index.html (home-page) route """
 @app.route("/")
 def index():
-    return render_template('index.html', status = status)
+    return render_template('index.html')
 
 """ about.html route """
 @app.route("/about")
@@ -148,6 +151,39 @@ def dashboard():
     traps = [ trap for user in query for trap in Trap.query.filter_by(owner=user.id) ]
 
     return render_template('dashboard.html', title='Dashboard', traps=traps)
+
+@app.route('/trap')
+@login_required
+def trap():
+    traps = Trap.query.all()
+    return render_template('trap.html', traps = traps)
+
+@app.route('/trap/<trap_id>', methods=['POST', 'GET'])
+@login_required
+def trapform(trap_id):
+    form = UpdateTrapForm()
+    val = Trap.query.filter_by(mac=trap_id).first()
+    if form.validate_on_submit():
+        val.name = form.name.data
+        email =  form.email.data
+        if email:
+            user = User.query.filter_by(email = email).first()
+            val.owner = user.id
+        db.session.commit()
+        return redirect('/trap')
+    elif request.method == 'GET':
+        form.mac.data = val.mac
+        form.name.data = val.name
+        #form.email = val.owner
+    return render_template('updatetrap.html', form=form)
+
+@app.route('/trap/delete/<trap_id>')
+@login_required
+def delete_trap(trap_id):
+    trap = Trap.query.filter_by(mac=trap_id).first()
+    db.session.delete(trap)
+    db.session.commit()
+    return redirect(url_for('trap'))
 
 """ 404 not found handler """
 @app.errorhandler(404)

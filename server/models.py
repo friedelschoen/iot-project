@@ -35,7 +35,7 @@ class User(db.Model, UserMixin):
 class Trap(db.Model):
     mac = db.Column(db.String(16), primary_key=True, nullable=False)
     name = db.Column(db.Text)
-    last_heartbeat = db.Column(db.DateTime, nullable=True, default=0)
+    last_heartbeat = db.Column(db.DateTime)
     caught = db.Column(db.Boolean, nullable=False, default=False)  
     owner = db.Column(db.Integer, db.ForeignKey('user.id'))
     connect_expired = db.Column(db.DateTime)
