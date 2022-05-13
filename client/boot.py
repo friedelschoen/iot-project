@@ -8,7 +8,6 @@ led2 = Pin(2, Pin.OUT)
 
 connection = network.WLAN(network.STA_IF)
 
-
 def connect():
 
     if connection.isconnected():
