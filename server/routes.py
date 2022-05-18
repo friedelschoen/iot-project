@@ -5,19 +5,23 @@ from flask import flash, redirect, render_template, request, url_for, abort, req
 from flask_login import current_user, login_required, login_user, logout_user
 from PIL import Image
 
-from .app import app, bcrypt, db
+from .app import app, bcrypt, db, socket
 from .forms import LoginForm, RegistrationForm, UpdateAccountForm, UpdateTrapForm
-from .models import Trap, User, UserType
+from .models import Trap, User
 
 @app.route("/api/update_status", methods=['POST', 'GET'])
 def update_status():
     if not request.json:
         return jsonify({ "error": "invalid-json" })
-    val = Trap.query.filter_by(mac=request.json['mac']).first() 
-    if not val:
+    trap = Trap.query.filter_by(mac=request.json['mac']).first() 
+    if not trap:
         return jsonify({ "error": "not-found" })
-    val.caught = request.json['status']
+
+    trap.caught = request.json['status']
     db.session.commit()
+
+    socket.emit('trap-change', { 'user': trap.owner })
+
     return jsonify({ "error": "ok" })
 
 @app.route("/api/search_connect", methods=['POST', 'GET'])
@@ -29,6 +33,7 @@ def search_connect():
         trap = Trap(mac=request.json['mac'], caught=False)
         db.session.add(trap)
         db.session.commit()
+
     return jsonify({ "error": "ok" })
 
 """ index.html (home-page) route """

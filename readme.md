@@ -13,7 +13,7 @@ $ git clone https://github.com/friedelschoen/muizenval.tk/
 
 **Alle afhankelijkheden installeren:**
 ```
-$ pip3 install flask wtforms flask_sqlalchemy flask-wtf email_validator flask-bcrypt flask-login pillow
+$ pip3 install flask wtforms flask_sqlalchemy flask-wtf email_validator flask-bcrypt flask-login pillow flask_socketio simple-websocket
 ```
 
 **De server runnen:**

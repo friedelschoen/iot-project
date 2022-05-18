@@ -15,6 +15,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&family=Source+Sans+Pro:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"></script>
+
+    <script type="text/javascript" charset="utf-8">
+        var socket = io();
+        var current_user = {{ current_user.id if current_user.is_authenticated else none | tojson }};
+//        socket.on('connect', function () { });
+    </script>
+
     {% if title %}
     <title>muizenval.tk - {{ title }}</title>
     {% else %}
@@ -82,17 +93,12 @@
                         <li class="list-group-item list-group-item-light">
                             <a href="{{ url_for('traps') }}">Uw muizenvallen</a>
                         </li>
-                        {% if current_user.type == 'catcher' %}
                         <li class="list-group-item list-group-item-light">
-                            <a href="#">Uw cli&euml;nten</a>
+                            <a href="{{ url_for('register_trap') }}">Muizenval registreren</a>
                         </li>
-                        {% endif %}
                         {% if current_user.type == 'admin' %}
                         <li class="list-group-item list-group-item-light">
                             <a href="#">Gebruikers bewerken</a>
-                        </li>
-                        <li class="list-group-item list-group-item-light">
-                            <a href="#">Statusaanvragen</a>
                         </li>
                         {% endif %}
                     </ul>

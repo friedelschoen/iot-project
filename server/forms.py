@@ -16,9 +16,8 @@ class RegistrationForm(FlaskForm):
     phone = StringField('Telefoon', validators=[ DataRequired(), Length(min=5) ])
     street = StringField('Straat', validators=[ DataRequired() ])
     housenumber = IntegerField('Huisnummer', validators=[ DataRequired() ])
-    postcode = StringField('Postcode', validators=[ DataRequired() ])
+    zipcode = StringField('Postcode', validators=[ DataRequired() ])
     place = StringField('Plaats', validators=[ DataRequired() ])
-    catcher_code = StringField('VangerCode', validators=[ DataRequired(), Length(min=5, max=5) ])
     submit = SubmitField('Registeren')
 
     """ validates whether name is already in use """
@@ -39,11 +38,6 @@ class RegistrationForm(FlaskForm):
     def validate_postcode(self, code):
         if len(code.data) != 6 or not code.data[0:4].isnumeric() or not code.data[4:6].isalpha():
             raise ValidationError('De postcode is niet geldig.')
-
-    def validate_catcher_code(self, code):
-        pass
-        #if not User.query.filter_by(type=UserType.CATCHER, catcher_code=code.data).first():
-        #    raise ValidationError('De rattenvanger is niet bekennt, hebt u de code juist ingevoerd?')
 
 
 """ login form for login.html """

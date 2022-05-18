@@ -8,9 +8,6 @@ from server.models import User, UserType
 
 users = [
 	(UserType.CLIENT, 'Boer Herman', 'boer@muizenval.tk'),
-	(UserType.CATCHER, 'Vanger Kees', 'vanger@muizenval.tk'),
-	(UserType.TECHNICIAN, 'Technicus Jos', 'technicus@muizenval.tk'),
-	(UserType.MANAGER, 'Manager Peter', 'manager@muizenval.tk'),
 	(UserType.ADMIN, 'Administrator Ralf', 'admin@muizenval.tk'),
 ]
 

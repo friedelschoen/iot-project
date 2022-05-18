@@ -1,5 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
+<script type="text/javascript">
+    socket.on('trap-change', function (data) {
+        if (data['user'] == current_user)
+            location.reload();
+    });
+</script>
+
 {% for trap in traps %}
 <article class="media content-section">
     <div class="media-body">

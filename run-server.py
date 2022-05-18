@@ -1,4 +1,4 @@
-from server.app import app
+from server.app import socket, app
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    socket.run(app, "0.0.0.0", 5000, debug=True)

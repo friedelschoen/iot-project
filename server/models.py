@@ -11,10 +11,7 @@ def load_user(user_id):
 
 class UserType(Enum):
     ADMIN = 0
-    MANAGER = 1
-    TECHNICIAN = 2
-    CATCHER = 3
-    CLIENT = 4
+    CLIENT = 1
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,8 +23,7 @@ class User(db.Model, UserMixin):
     phone = db.Column(db.Text, nullable=False)
     address = db.Column(db.Text)
 
-    contact = db.Column(db.Integer, db.ForeignKey('user.id')) # set if technician, catcher, user
-    catcher_code = db.Column(db.String(5)) # set if catcher 
+    contact = db.Column(db.Integer, db.ForeignKey('user.id')) # set if user
 
     def contact_class(self):
         return User.query.filter_by(id=self.contact).first()
