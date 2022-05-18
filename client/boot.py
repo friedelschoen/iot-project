@@ -2,12 +2,11 @@ import sys
 import config
 import network
 from time import sleep
-from machine import Pin, ADC
+from machine import Pin
 
 led2 = Pin(2, Pin.OUT)
 
 connection = network.WLAN(network.STA_IF)
-
 
 def connect():
 
