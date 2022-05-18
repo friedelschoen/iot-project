@@ -13,13 +13,12 @@
     <!-- Google Font: Source Sans Pro, Source Code Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&family=Source+Sans+Pro:ital,wght@0,400;0,600;1,400;1,600&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&family=Source+Sans+Pro:ital,wght@0,400;0,600;1,400;1,600&display=swap">
     {% if title %}
-    <title>muizenval.io - {{ title }}</title>
+    <title>muizenval.tk - {{ title }}</title>
     {% else %}
-    <title>muizenval.io</title>
+    <title>muizenval.tk</title>
     {% endif %}
 </head>
 
@@ -28,7 +27,7 @@
         <nav class="navbar navbar-expand-md fixed-top">
             <div class="container">
                 <a class="navbar-brand mr-4" href="/">
-                    <b><code>muizenval.io</code></b>
+                    <b><code>muizenval.tk</code></b>
                 </a>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav mr-auto">
@@ -80,11 +79,9 @@
                         <li class="list-group-item list-group-item-light">
                             <a href="{{ url_for('account') }}">Profielinstellingen</a>
                         </li>
-                        {#} {% if current_user.type in [ 'client', 'catcher' ] %}{#}
                         <li class="list-group-item list-group-item-light">
                             <a href="{{ url_for('traps') }}">Uw muizenvallen</a>
                         </li>
-                        {#}{% endif %}{#}
                         {% if current_user.type == 'catcher' %}
                         <li class="list-group-item list-group-item-light">
                             <a href="#">Uw cli&euml;nten</a>

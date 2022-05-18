@@ -7,11 +7,11 @@ from server.models import User, UserType
 #typ = input('Type [admin,manager,technician,catcher,client]? ')
 
 users = [
-	(UserType.CLIENT, 'Boer Herman', 'boer@muizenval.io'),
-	(UserType.CATCHER, 'Vanger Kees', 'vanger@muizenval.io'),
-	(UserType.TECHNICIAN, 'Technicus Jos', 'technicus@muizenval.io'),
-	(UserType.MANAGER, 'Manager Peter', 'manager@muizenval.io'),
-	(UserType.ADMIN, 'Administrator Ralf', 'admin@muizenval.io'),
+	(UserType.CLIENT, 'Boer Herman', 'boer@muizenval.tk'),
+	(UserType.CATCHER, 'Vanger Kees', 'vanger@muizenval.tk'),
+	(UserType.TECHNICIAN, 'Technicus Jos', 'technicus@muizenval.tk'),
+	(UserType.MANAGER, 'Manager Peter', 'manager@muizenval.tk'),
+	(UserType.ADMIN, 'Administrator Ralf', 'admin@muizenval.tk'),
 ]
 
 address = 'Kerklaan 69\n9876XY Groningen'
