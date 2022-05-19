@@ -68,7 +68,11 @@ class UpdateAccountForm(FlaskForm):
             raise ValidationError('Deze e-mail bestaat al, log in als dat uw e-mail is')
 
 class UpdateTrapForm(FlaskForm):
-    mac = StringField('Mac-Adres', validators=[ Length(min=16, max=16) ])
+    mac = StringField('MAC')
     name = StringField('Naam')
     email = StringField('E-mail')
     submit = SubmitField('Bewerken')
+
+class ConnectTrapForm(FlaskForm):
+    mac = StringField('MAC', validators=[ Length(min=16, max=16) ])
+    submit = SubmitField('Verbinden')

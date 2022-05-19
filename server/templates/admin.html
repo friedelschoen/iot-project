@@ -6,6 +6,47 @@
             location.reload();
     });
 </script>
+<article class="media content-section">
+    <div class="media-body">
+        <h3>These are traps who are waiting to be connected</h3>
+    </div>
+</article>
+
+{% for trap in connect_traps %}
+<article class="media content-section">
+    <div class="media-body">
+        <p>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1"
+                href="{{ url_for('trap_update', trap_id=trap.mac) }}">Bewerken</a>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1"
+                href="{{ url_for('trap_delete', trap_id=trap.mac) }}">Verwijderen</a>
+        </p>
+        <h3><a class="article-title" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="{{ trap.status_color() }}"
+                    class="bi bi-circle-fill" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="10" />
+                </svg>
+                -
+                {% if trap.name %}
+                {{ trap.name }}
+                {% else %}
+                <code>[{{ trap.pretty_mac() }}]</code>
+                {% endif %}
+            </a>
+        </h3>
+        {% if trap.name %}
+        <p>
+            <code>[{{ trap.pretty_mac() }}]</code>
+        </p>
+        {% endif %}
+    </div>
+</article>
+
+<article class="media content-section">
+    <div class="media-body">
+        <h3>These are all other traps!</h3>
+    </div>
+</article>
 
 {% for trap in traps %}
 <article class="media content-section">
@@ -33,11 +74,6 @@
         <p>
             <code>[{{ trap.pretty_mac() }}]</code>
         </p>
-        {% endif %}
-        {% if trap.owner %}
-        <b>
-            van {{ trap.owner_class().name }}
-        </b>
         {% endif %}
     </div>
 

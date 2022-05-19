@@ -40,6 +40,9 @@ class Trap(db.Model):
     def pretty_mac(self):
         upper = self.mac.upper()
         return ':'.join([ upper[i] + upper[i+1] for i in range(0, len(upper), 2) ])
+    
+    def owner_class(self):
+        return User.query.filter_by(id=self.owner).first()
 
     def status_color(self):
         if self.caught:

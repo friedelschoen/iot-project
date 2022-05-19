@@ -6,8 +6,9 @@ from flask_login import current_user, login_required, login_user, logout_user
 from PIL import Image
 
 from .app import app, bcrypt, db, socket
-from .forms import LoginForm, RegistrationForm, UpdateAccountForm, UpdateTrapForm
+from .forms import ConnectTrapForm, LoginForm, RegistrationForm, UpdateAccountForm, UpdateTrapForm
 from .models import Trap, User
+
 
 @app.route("/api/update_status", methods=['POST', 'GET'])
 def update_status():
@@ -35,6 +36,7 @@ def search_connect():
         db.session.commit()
 
     return jsonify({ "error": "ok" })
+
 
 """ index.html (home-page) route """
 @app.route("/")
@@ -153,6 +155,24 @@ def dashboard():
 def traps():
     traps = Trap.query.all()
     return render_template('trap.html', traps=traps)
+
+@app.route('/traps/connect', methods=['POST', 'GET'])
+@login_required
+def trap_connect():
+    form = ConnectTrapForm()
+    if form.validate_on_submit() and form.mac.data:
+        trap = Trap.query.filter_by(mac=form.mac.data.replace(':', '').replace(' ', '')).first()
+        if not trap:
+            flash('Muizenval niet gevonden', 'danger')
+            return redirect(url_for('trap_connect'))
+
+        trap.owner = current_user.id
+        db.session.commit()
+        flash('Muizenval toegevoegd!', 'success')
+        return redirect(url_for('traps'))
+
+    return render_template('connect.html', form=form)
+
 
 @app.route('/trap/<trap_id>/update', methods=['POST', 'GET'])
 @login_required
