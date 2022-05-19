@@ -66,7 +66,8 @@ def search_connect():
 """ index.html (home-page) route """
 @app.route("/")
 def index():
-    return render_template('index.html')
+    form = LoginForm()
+    return render_template('index.html', form=form)
 
 """ about.html route """
 @app.route("/about")
