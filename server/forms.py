@@ -2,7 +2,7 @@ import re
 from tokenize import String
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
-from wtforms import BooleanField, HiddenField, PasswordField, StringField, SubmitField, IntegerField
+from wtforms import BooleanField, HiddenField, PasswordField, StringField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 
 from .models import User
@@ -76,3 +76,16 @@ class UpdateTrapForm(FlaskForm):
 class ConnectTrapForm(FlaskForm):
     mac = StringField('MAC', validators=[ Length(min=16, max=16) ])
     submit = SubmitField('Verbinden')
+
+
+
+
+""" search form for admin.html """
+class SearchForm(FlaskForm):
+    username = StringField('Naam', validators=[ DataRequired(), Length(min=2, max=20)])
+    submit = SubmitField('Zoeken')
+
+""" account-settings form for admin_user.html """
+class AdminForm(FlaskForm):
+    type = SelectField('Type',  choices=[('client', 'Klant'), ('admin', 'Administrator')])
+    submit = SubmitField('Bewerken')

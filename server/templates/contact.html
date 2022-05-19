@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+{% with contact = current_user.contact_class() %}
+<article class="media content-section">
+	<div class="media-body">
+		<h2>Uw contactgegevens</h2>
+		<p>
+			<b>{{ contact.name }}</b>
+		</p>
+		<p>
+			{{ contact.email }}
+		</p>
+		<p>
+			{{ contact.phone }}
+		</p>
+		<p>
+			{{ contact.address.replace('\n', '<br>') | safe }}
+		</p>
+	</div>
+</article>
+{% endwith %}
+{% endblock content %}

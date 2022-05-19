@@ -9,7 +9,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from PIL import Image
 
 from .app import app, bcrypt, db, socket
-from .forms import ConnectTrapForm, LoginForm, RegistrationForm, UpdateAccountForm, UpdateTrapForm
+from .forms import AdminForm, ConnectTrapForm, LoginForm, RegistrationForm, SearchForm, UpdateAccountForm, UpdateTrapForm
 from .models import Trap, User, UserType
 
 def clean_traps():
@@ -226,6 +226,75 @@ def trap_delete(trap_id):
     db.session.commit()
     
     return redirect(url_for('traps'))
+
+@app.route('/contact')
+@login_required
+def contact():
+    return render_template('contact.html')
+
+
+""" admin.html route """
+@app.route("/users", methods=['GET','POST'])
+@login_required
+def admin():
+    if current_user.type != UserType.ADMIN:
+        flash('U mag deze website niet bereiken', 'error')
+        return redirect('/')
+    form = SearchForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(name=form.username.data).first()
+        if user == None:
+            flash(f'Geen gebrukers gevonden met de gebruikersnaam: {form.username.data}!', 'danger')
+        else:
+            flash(f'Gebruiker gevonden met gebruikersnaam: {form.username.data}!', 'success')
+            return redirect(url_for('admin_user', user_id= user.id))
+    return render_template('admin.html', form=form)
+
+""" account-admin route """
+@app.route("/user/<int:user_id>", methods=['GET','POST'])
+@login_required
+def admin_user(user_id):
+    if current_user.type != UserType.ADMIN:
+        flash('U mag deze website niet bereiken', 'error')
+        return redirect('/')
+    form = AdminForm()
+    user = User.query.filter_by(id=user_id).first()
+    image_file = url_for('static', filename='profile_pics/' + user.image_file)
+    if form.validate_on_submit():
+        user.type = form.type.data
+        db.session.commit()
+        flash(f'De gebruiker {user.username} is nu een {user.type}', 'success')
+        return redirect(url_for('admin'))
+    elif request.method == 'GET':
+        form.type.data = user.type
+    return render_template('admin_user.html', form=form, user=user, image_file=image_file)
+
+""" delete-user route """
+@app.route("/user/<int:user_id>/delete", methods=['GET','POST'])
+@login_required
+def delete_user(user_id):
+    if current_user.type != UserType.ADMIN:
+        flash('U mag deze website niet bereiken', 'danger')
+        return redirect('/')
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash(f'De gebruiker {user.username} werd verwijdert', 'success')
+    return redirect(url_for('admin'))
+
+""" reset user's password route """
+@app.route("/user/<int:user_id>/reset", methods=['GET','POST'])
+@login_required
+def reset_user(user_id):
+    if current_user.type != UserType.ADMIN:
+        flash('U mag deze website niet bereiken', 'danger')
+        return redirect('/')
+    user = User.query.get_or_404(user_id)
+    user.password = bcrypt.generate_password_hash(user.email).decode('utf-8')
+    db.session.commit()
+    flash(f'{user.name}\'s wachtwoord is nu zijn/haar e-mail', 'success')
+    return redirect(url_for('admin'))
+
 
 """ 404 not found handler """
 @app.errorhandler(404)
