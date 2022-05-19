@@ -49,8 +49,7 @@
         </fieldset>
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
-            <a class="btn btn-secondary btn-sm mt-1 mb-1"
-                href="{{ url_for('trap_delete', trap_id=trap.mac) }}">Verwijderen</a>
+            <a class="btn btn btn-danger" href="{{ url_for('trap_delete', trap_id=trap.mac) }}">Verwijderen</a>
         </div>
     </form>
 </div>

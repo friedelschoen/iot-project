@@ -1,8 +1,9 @@
+import json
 import os
 import secrets
 from datetime import datetime, timedelta
 
-from flask import flash, redirect, render_template, request, url_for, abort, request, jsonify
+from flask import flash, redirect, render_template, request, url_for, jsonify
 from flask_login import current_user, login_required, login_user, logout_user
 from PIL import Image
 
@@ -10,6 +11,12 @@ from .app import app, bcrypt, db, socket
 from .forms import ConnectTrapForm, LoginForm, RegistrationForm, UpdateAccountForm, UpdateTrapForm
 from .models import Trap, User, UserType
 
+def clean_traps():
+    query = Trap.query.filter((Trap.connect_expired < datetime.utcnow()) & (Trap.owner == None))
+    i = len(query.all())
+    query.delete()
+    db.session.commit()
+    print(f'[*] {i} traps cleaned')
 
 @app.route("/api/update_status", methods=['POST', 'GET'])
 def update_status():
@@ -37,6 +44,7 @@ def search_connect():
         trap = Trap(mac=request.json['mac'])
         db.session.add(trap)
 
+    trap.owner = None
     trap.connect_expired = datetime.utcnow() + timedelta(minutes=5)
 
     db.session.commit()
@@ -60,10 +68,11 @@ def register():
     if current_user.is_authenticated:
         flash('U bent al ingelogd', 'warning')
         return redirect('/')
+
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        address = f"{form.street} {form.housenumber}\n{form.postcode} {form.place}"
+        address = f"{form.street} {form.housenumber}\n{form.zipcode} {form.place}"
         user = User(
             name=form.name.data, 
             email=form.email.data, 
@@ -149,10 +158,14 @@ def account():
 @login_required
 def traps():
     if current_user.type == UserType.ADMIN:
-        traps = Trap.query.all()
+        clean_traps()
+        query = Trap.query.all()
     else:
-        traps = Trap.query.filter_by(owner=current_user.id)
-    return render_template('trap.html', traps=traps)
+        query = Trap.query.filter_by(owner=current_user.id)
+
+    trap_json = [ { c.name: str(getattr(trap, c.name)) for c in trap.__table__.columns } for trap in query ]
+
+    return render_template('trap.html', traps=query, trap_json=trap_json)
 
 @app.route('/traps/connect', methods=['POST', 'GET'])
 @login_required
@@ -183,6 +196,9 @@ def trap_update(trap_id):
             user = User.query.filter_by(email=form.email.data).first()
             trap.owner = user.id
         db.session.commit()
+        return redirect(url_for('traps'))
+    elif not trap:
+        flash('Muizeval niet gevonden', 'danger')
         return redirect(url_for('traps'))
     elif request.method == 'GET':
         form.mac.data = trap.mac

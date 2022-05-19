@@ -1,12 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-<script type="text/javascript">
-    socket.on('trap-change', function (data) {
-        if (data['user'] == current_user)
-            location.reload();
-    });
-</script>
-
+<article class="media content-section">
+    <div class="media-body">
+        <div id="trap-map"></div>
+    </div>
+</article>
 {% for trap in traps %}
 <article class="media content-section">
     <div class="media-body">
@@ -46,4 +44,29 @@
     </div>{#}
 </article>
 {% endfor %}
+
+<script type="text/javascript">
+    socket.on('trap-change', function (data) {
+        if (data['user'] == current_user)
+            location.reload();
+    });
+
+    //    var trap_macs = [
+    /* {% for trap in traps %} */
+    //"{{ trap.mac }}" }
+    /* {% endfor %} */
+    //];
+
+    var traps = {{ trap_json | tojson }};
+
+    var map = L.map('trap-map').setView([52.283333, 5.666667], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+//    L.marker([51.5, -0.09]).addTo(map)
+  //      .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+    //    .openPopup();
+</script>
 {% endblock content %}

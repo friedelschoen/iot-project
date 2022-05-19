@@ -13,7 +13,7 @@ $ git clone https://github.com/friedelschoen/muizenval.tk/
 
 **Alle afhankelijkheden installeren:**
 ```
-$ pip3 install flask wtforms flask_sqlalchemy flask-wtf email_validator flask-bcrypt flask-login pillow flask_socketio simple-websocket
+$ pip3 install flask wtforms flask_sqlalchemy flask-wtf email_validator flask-bcrypt flask-login pillow flask_socketio simple-websocket gevent-websocket
 ```
 
 **Is de database leeg? Test-gebruikers toevoegen:**
@@ -36,3 +36,7 @@ $ python3 run-server.py
 ```
 $ python3 test-client.py
 ```
+
+## Known issues
+
+- op Anaconda-python werkt niks (flask zou gewoon ophangen), dus gebruik de officiële Python-versie

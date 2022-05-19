@@ -107,3 +107,7 @@ a.article-title:hover {
 .form-code {
   font-family: 'Source Code Pro';
 }
+
+#trap-map { 
+  height: 300px; 
+}
