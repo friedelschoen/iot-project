@@ -16,19 +16,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 nav {
-  /*2a4b98, 2a4583
-  2a9a6d, 2a825f
-  h: 156*/
 
-background: repeating-linear-gradient(
-  45deg,
-  hsl(156, 57%, 38%),
-  hsl(156, 57%, 38%) 10px,
-  hsl(156, 51%, 34%) 10px,
-  hsl(156, 51%, 34%) 20px
-);
-color: #fff;
-font-size: 15pt;
 }
 
 nav code {
@@ -36,11 +24,11 @@ nav code {
 }
 
 nav a {
-  color: #fff;
+  color: rgb(0, 0, 0);
 }
 
 nav a:hover {
-  color: #fff;
+  color: rgb(0, 0, 0);
   text-decoration: underline;
 }
 
@@ -110,4 +98,10 @@ a.article-title:hover {
 
 #trap-map { 
   height: 300px; 
+}
+
+#sidebar {
+  min-width: 250px;
+  max-width: 250px;
+  min-height: 100vh;
 }

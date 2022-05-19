@@ -1,0 +1,96 @@
+<main role="main" class="container">
+    <div class="row">
+        <div class="col-md-8">
+            {% for category, message in get_flashed_messages(with_categories=true) %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% block content %}{% endblock %}
+        </div>
+        <div class="col-md-4">
+            <div class="content-section">
+                <h3>Welkom <b>{{ current_user.name if current_user.is_authenticated else 'gast' }}</b>!</h3>
+                {% if not current_user.is_authenticated %}
+                <p>
+                    Hallo! Jij bent nog niet ingelogd. Heb jij al een account moet jij bovenrechts op inloggen
+                    klikken.
+                </p>
+                <p>
+                    Heb jij al onze producten gekocht maar jij hebt nog geen account? Je kan makkelijk een account
+                    registreren en je muizenvallen inschrijven!
+                </p>
+                <p>
+                    Jij bent nieuw en wilt ons producten kopen of testen? Ga naar ons shop om onze aanbiedingen in
+                    te kunnen zien.
+                </p>
+                {% else %}
+                <p class='text-muted'>
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-light">
+                        <a href="{{ url_for('account') }}">Profielinstellingen</a>
+                    </li>
+                    <li class="list-group-item list-group-item-light">
+                        <a href="{{ url_for('traps') }}">Uw muizenvallen</a>
+                    </li>
+                    <li class="list-group-item list-group-item-light">
+                        <a href="{{ url_for('trap_connect') }}">Muizenval verbinden</a>
+                    </li>
+                    {% if current_user.type == 'admin' %}
+                    <li class="list-group-item list-group-item-light">
+                        <a href="#">Gebruikers bewerken</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                </p>
+                {% endif %}
+            </div>
+            {% if current_user.is_authenticated %}
+            {% with contact = current_user.contact_class() %}
+            {% if contact %}
+            <div class="content-section">
+                <h3>Contact</h3>
+                <h5>
+                    <b>{{ contact.name }}</b>
+                </h5>
+                <p>
+                    E-Mail: <a href="mailto:{{ contact.email }}">{{ contact.email }}</a><br>
+                    Tel.: {{ contact.phone }}
+                </p>
+                <p>
+                    {% autoescape false %}
+                    {{ contact.address | replace('\n', '<br>') }}<br>
+                    {% endautoescape %}
+                </p>
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% endif %}
+        </div>
+    </div>
+</main>
+<header class="site-header">
+    <nav class="navbar navbar-expand-md fixed-top">
+        <div class="container">
+            <a class="navbar-brand mr-4" href="/">
+                <b><code>muizenval.tk</code></b>
+            </a>
+            <div class="collapse navbar-collapse" id="navbarToggle">
+                <div class="navbar-nav mr-auto">
+                    <a class="nav-item nav-link" href="{{ url_for('about') }}">Over ons</a>
+                    <a class="nav-item nav-link" href="{{ url_for('producten') }}">Producten</a>
+                </div>
+                <!-- Navbar Right Side -->
+                <div class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                    <a class="nav-item nav-link" href="{{ url_for('logout') }}">Uitloggen</a>
+                    {% else %}
+                    <a class="nav-item nav-link" href="{{ url_for('login') }}">Inloggen</a>
+                    <a class="nav-item nav-link" href="{{ url_for('register') }}">Registeren</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<!--nav bar-->
