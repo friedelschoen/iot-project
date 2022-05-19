@@ -18,7 +18,7 @@ $ pip3 install flask wtforms flask_sqlalchemy flask-wtf email_validator flask-bc
 
 **Is de database leeg? Test-gebruikers toevoegen:**
 ```
-$ python3 add-user.py
+$ python3 create-db.py
 ```
 
 Volgende gebuikers worden toegevoegd:
@@ -34,7 +34,7 @@ $ python3 run-server.py
 
 **Geen muizenval bij de hand? Interactieve test-muizenval proberen:**
 ```
-$ python3 test-client.py
+$ python3 test-client.py --help
 ```
 
 ## Known issues

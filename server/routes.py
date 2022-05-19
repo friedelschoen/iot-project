@@ -2,6 +2,7 @@ import json
 import os
 import secrets
 from datetime import datetime, timedelta
+import string
 
 from flask import flash, redirect, render_template, request, url_for, jsonify
 from flask_login import current_user, login_required, login_user, logout_user
@@ -18,11 +19,17 @@ def clean_traps():
     db.session.commit()
     print(f'[*] {i} traps cleaned')
 
+def validate_mac(mac):
+    return len(mac) == 16 and all(c in string.hexdigits for c in mac)
+
+
 @app.route("/api/update_status", methods=['POST', 'GET'])
 def update_status():
     if not request.json:
         return jsonify({ "error": "invalid-json" })
-    trap = Trap.query.filter_by(mac=request.json['mac']).first() 
+    if not validate_mac(request.json['mac']):
+        return jsonify({ "error": "invalid-mac" })
+    trap = Trap.query.filter_by(mac=request.json['mac'].lower()).first() 
     if not trap:
         return jsonify({ "error": "not-found" })
 
@@ -38,10 +45,14 @@ def update_status():
 def search_connect():
     if not request.json:
         return jsonify({ "error": "invalid-json" })
+    if not validate_mac(request.json['mac']):
+        return jsonify({ "error": "invalid-mac" })
     
-    trap = Trap.query.filter_by(mac=request.json['mac']).first()
+    mac = request.json['mac'].lower()
+    
+    trap = Trap.query.filter_by(mac=mac).first()
     if not trap:
-        trap = Trap(mac=request.json['mac'])
+        trap = Trap(mac=mac)
         db.session.add(trap)
 
     trap.owner = None
@@ -172,12 +183,13 @@ def traps():
 def trap_connect():
     form = ConnectTrapForm()
     if form.validate_on_submit() and form.mac.data:
-        trap = Trap.query.filter_by(mac=form.mac.data.replace(':', '').replace(' ', '')).filter(Trap.connect_expired > datetime.utcnow()).first()
+        trap = Trap.query.filter_by(mac=form.mac.data.replace(':', '').replace(' ', '').lower()).filter(Trap.connect_expired > datetime.utcnow()).first()
         if not trap:
             flash('Muizenval niet gevonden', 'danger')
             return redirect(url_for('trap_connect'))
 
         trap.owner = current_user.id
+        trap.connect_expired = None
         db.session.commit()
         flash('Muizenval toegevoegd!', 'success')
         return redirect(url_for('traps'))
@@ -198,17 +210,17 @@ def trap_update(trap_id):
         db.session.commit()
         return redirect(url_for('traps'))
     elif not trap:
-        flash('Muizeval niet gevonden', 'danger')
+        flash('Muizenval niet gevonden', 'danger')
         return redirect(url_for('traps'))
     elif request.method == 'GET':
-        form.mac.data = trap.mac
+        form.mac.data = trap.pretty_mac()
         form.name.data = trap.name
     return render_template('updatetrap.html', form=form, trap=trap)
 
 @app.route('/trap/<trap_id>/delete')
 @login_required
 def trap_delete(trap_id):
-    trap = Trap.query.filter_by(mac=trap_id).first()
+    trap = Trap.query.filter_by(mac=trap_id.lower()).first()
     db.session.delete(trap)
     db.session.commit()
     

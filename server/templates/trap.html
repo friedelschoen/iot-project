@@ -46,17 +46,14 @@
 {% endfor %}
 
 <script type="text/javascript">
-    function chunkString(str, len) {
-        const size = Math.ceil(str.length / len)
-        const r = Array(size)
-        let offset = 0
+    function prettyMAC(str) {
+        var res = []
 
-        for (let i = 0; i < size; i++) {
-            r[i] = str.substr(offset, len)
-            offset += len
+        for (var i = 0; i < 16; i += 2) {
+            res.push(str.substr(i, 2).toUpperCase())
         }
 
-        return r
+        return res.join(':')
     }
 
     socket.on('trap-change', function (data) {
@@ -83,7 +80,7 @@
         if (trap.location_lat && trap.location_lon) {
             L.marker([trap.location_lat, trap.location_lon])
                 .addTo(map)
-                .bindPopup(`[${chunkString(trap.mac, 2).join(':')}] ${trap.name || ''}`);
+                .bindPopup(`[${prettyMAC(trap.mac)}] ${trap.name || ''}`);
         }
     }
 </script>
