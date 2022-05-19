@@ -70,7 +70,7 @@ class UpdateAccountForm(FlaskForm):
 class UpdateTrapForm(FlaskForm):
     mac = StringField('MAC')
     name = StringField('Naam')
-    email = StringField('E-mail')
+    location = StringField('Locatie')
     submit = SubmitField('Bewerken')
 
 class ConnectTrapForm(FlaskForm):

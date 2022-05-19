@@ -51,3 +51,6 @@ class Trap(db.Model):
         if self.caught:
             return '#f4a900'
         return 'currentColor'
+
+    def dict(self):
+        return { c.name: getattr(self, c.name) for c in self.__table__.columns }

@@ -163,7 +163,7 @@ def traps():
     else:
         query = Trap.query.filter_by(owner=current_user.id)
 
-    trap_json = [ { c.name: str(getattr(trap, c.name)) for c in trap.__table__.columns } for trap in query ]
+    trap_json = [ trap.dict() for trap in query ]
 
     return render_template('trap.html', traps=query, trap_json=trap_json)
 
@@ -192,9 +192,9 @@ def trap_update(trap_id):
     trap = Trap.query.filter_by(mac=trap_id).first()
     if form.validate_on_submit():
         trap.name = form.name.data
-        if form.email.data:
-            user = User.query.filter_by(email=form.email.data).first()
-            trap.owner = user.id
+        print(form.location.data)
+        if form.location.data:
+            trap.location_lat, trap.location_lon = form.location.data.split(' ', 2)
         db.session.commit()
         return redirect(url_for('traps'))
     elif not trap:

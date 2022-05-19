@@ -34,23 +34,59 @@
                 {% endif %}
             </div>
             <div class="form-group">
-                {{ form.email.label(class="form-control-label") }}
-                {% if form.email.errors %}
-                {{ form.email(class="form-control form-control-lg is-invalid") }}
+                {{ form.location.label(class="form-control-label") }}
+                {% if form.location.errors %}
+                {{ form.location(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.email.errors %}
+                    {% for error in form.location.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.email(class="form-control form-control-lg") }}
+                {{ form.location(id='location-input', readonly=True, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
         </fieldset>
+        <p>
+        <div id="trap-map"></div>
+        </p>
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
             <a class="btn btn btn-danger" href="{{ url_for('trap_delete', trap_id=trap.mac) }}">Verwijderen</a>
         </div>
     </form>
 </div>
+<script type="text/javascript">
+    var trap = {{ trap.dict() | tojson }};
+
+    var map = L.map('trap-map').setView([52.283333, 5.666667], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+
+    let marker = null;
+
+    function setMarker(locArg) {
+        var loc = L.latLng(locArg);
+        if (marker) {
+            marker.setLatLng(loc);
+        } else {
+            marker = L.marker(loc).addTo(map);
+        }
+
+        document.getElementById('location-input').value = `${loc.lat} ${loc.lng}`;
+    }
+
+    if (trap.location_lat && trap.location_lon) {
+        setMarker([trap.location_lat, trap.location_lon]);
+    }
+
+    function onMapClick(e) {
+        setMarker(e.latlng);
+    }
+
+    map.on('click', onMapClick);
+</script>
 {% endblock content %}
