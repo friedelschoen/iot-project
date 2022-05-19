@@ -36,6 +36,8 @@ class Trap(db.Model):
     caught = db.Column(db.Boolean, nullable=False, default=False)  
     owner = db.Column(db.Integer, db.ForeignKey('user.id'))
     connect_expired = db.Column(db.DateTime)
+    location_lat = db.Column(db.Float)
+    location_lon = db.Column(db.Float)
 
     def pretty_mac(self):
         upper = self.mac.upper()

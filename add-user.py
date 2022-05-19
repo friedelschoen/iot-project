@@ -15,6 +15,8 @@ address = 'Kerklaan 69\n9876XY Groningen'
 
 hashed_password = bcrypt.generate_password_hash('hallo').decode('utf-8')
 
+db.create_all()
+
 for typ, name, email in users:
 	phone = '06-' + str(randint(10000000, 99999999))
 	user = User(
