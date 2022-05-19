@@ -10,13 +10,7 @@
 {% for trap in traps %}
 <article class="media content-section">
     <div class="media-body">
-        <p>
-            <a class="btn btn-secondary btn-sm mt-1 mb-1"
-                href="{{ url_for('trap_update', trap_id=trap.mac) }}">Bewerken</a>
-            <a class="btn btn-secondary btn-sm mt-1 mb-1"
-                href="{{ url_for('trap_delete', trap_id=trap.mac) }}">Verwijderen</a>
-        </p>
-        <h3><a class="article-title" href="#">
+        <h3><a class="article-title" href="{{ url_for('trap_update', trap_id=trap.mac) }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="{{ trap.status_color() }}"
                     class="bi bi-circle-fill" viewBox="0 0 20 20">
                     <circle cx="10" cy="10" r="10" />

@@ -1,5 +1,6 @@
 import os
 import secrets
+from datetime import datetime, timedelta
 
 from flask import flash, redirect, render_template, request, url_for, abort, request, jsonify
 from flask_login import current_user, login_required, login_user, logout_user
@@ -7,7 +8,7 @@ from PIL import Image
 
 from .app import app, bcrypt, db, socket
 from .forms import ConnectTrapForm, LoginForm, RegistrationForm, UpdateAccountForm, UpdateTrapForm
-from .models import Trap, User
+from .models import Trap, User, UserType
 
 
 @app.route("/api/update_status", methods=['POST', 'GET'])
@@ -21,7 +22,8 @@ def update_status():
     trap.caught = request.json['status']
     db.session.commit()
 
-    socket.emit('trap-change', { 'user': trap.owner })
+    if trap.owner:
+        socket.emit('trap-change', { 'user': trap.owner })
 
     return jsonify({ "error": "ok" })
 
@@ -30,10 +32,14 @@ def search_connect():
     if not request.json:
         return jsonify({ "error": "invalid-json" })
     
-    if not Trap.query.filter_by(mac=request.json['mac']).first():
-        trap = Trap(mac=request.json['mac'], caught=False)
+    trap = Trap.query.filter_by(mac=request.json['mac']).first()
+    if not trap:
+        trap = Trap(mac=request.json['mac'])
         db.session.add(trap)
-        db.session.commit()
+
+    trap.connect_expired = datetime.utcnow() + timedelta(minutes=5)
+
+    db.session.commit()
 
     return jsonify({ "error": "ok" })
 
@@ -138,22 +144,14 @@ def account():
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html',  title='Profiel', image_file=image_file, form=form)
 
-"""@app.route('/dashboard')
-@login_required
-def dashboard():
-    query = [ current_user ]
-    if current_user.type == UserType.CATCHER:
-        query += list(User.query.filter_by(contact=current_user.id))
-    
-    traps = [ trap for user in query for trap in Trap.query.filter_by(owner=user.id) ]
-
-    return render_template('dashboard.html', title='Dashboard', traps=traps)
-"""
 
 @app.route('/traps')
 @login_required
 def traps():
-    traps = Trap.query.all()
+    if current_user.type == UserType.ADMIN:
+        traps = Trap.query.all()
+    else:
+        traps = Trap.query.filter_by(owner=current_user.id)
     return render_template('trap.html', traps=traps)
 
 @app.route('/traps/connect', methods=['POST', 'GET'])
@@ -161,7 +159,7 @@ def traps():
 def trap_connect():
     form = ConnectTrapForm()
     if form.validate_on_submit() and form.mac.data:
-        trap = Trap.query.filter_by(mac=form.mac.data.replace(':', '').replace(' ', '')).first()
+        trap = Trap.query.filter_by(mac=form.mac.data.replace(':', '').replace(' ', '')).filter(Trap.connect_expired > datetime.utcnow()).first()
         if not trap:
             flash('Muizenval niet gevonden', 'danger')
             return redirect(url_for('trap_connect'))
@@ -178,19 +176,18 @@ def trap_connect():
 @login_required
 def trap_update(trap_id):
     form = UpdateTrapForm()
-    val = Trap.query.filter_by(mac=trap_id).first()
+    trap = Trap.query.filter_by(mac=trap_id).first()
     if form.validate_on_submit():
-        val.name = form.name.data
+        trap.name = form.name.data
         if form.email.data:
             user = User.query.filter_by(email=form.email.data).first()
-            val.owner = user.id
+            trap.owner = user.id
         db.session.commit()
         return redirect(url_for('traps'))
     elif request.method == 'GET':
-        form.mac.data = val.mac
-        form.name.data = val.name
-        #form.email = val.owner
-    return render_template('updatetrap.html', form=form)
+        form.mac.data = trap.mac
+        form.name.data = trap.name
+    return render_template('updatetrap.html', form=form, trap=trap)
 
 @app.route('/trap/<trap_id>/delete')
 @login_required
