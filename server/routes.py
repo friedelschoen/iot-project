@@ -84,7 +84,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        address = f"{form.street} {form.housenumber}\n{form.zipcode} {form.place}"
+        address = f"{form.street} {form.housenumber}\n{form.postcode} {form.place}"
         user = User(
             name=form.name.data, 
             email=form.email.data, 

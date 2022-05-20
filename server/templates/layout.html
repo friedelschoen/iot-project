@@ -42,6 +42,12 @@
         var socket = io();
         var current_user = {{ current_user.id if current_user.is_authenticated else none | tojson }};
 //        socket.on('connect', function () { });
+        $('.dropdown-toggle').dropdown()
+
+        $(document).ready(function() {
+            $('li.active a').removeClass('active');
+            $('a[href="' + location.pathname + '"]').closest('li ').addClass('active'); 
+        });
     </script>
 
     {% if title %}
@@ -81,9 +87,9 @@
             <div class="col-3">
                 <ul class="nav nav-pills flex-column nav-justified">
                     {% if current_user.is_authenticated %}
-                    <li class="nav-item">
+                    <!--<li class="nav-item">
                         <a class="nav-link" href="{{ url_for('account') }}"><b>{{current_user.name}}</b></a>
-                    </li>
+                    </li>-->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('traps') }}">Dashboard</a>
                     </li>
@@ -104,8 +110,8 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('about') }}">Over ons</a>
                     </li>
-
-                    <!--
+                    {% if current_user.is_authenticated %}
+                    <div class="dropdown-divider"></div>
                     <div class="dropdown">
                         <li class="nav-item">
                             <a class="nav-link dropdown-toggle" href="#" role="button" id="account-dropdown"
@@ -115,13 +121,42 @@
 
                             <div class="dropdown-menu" aria-labelledby="account-dropdown">
                                 <a class="dropdown-item" href="{{ url_for('account') }}">Instellingen</a>
+                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ url_for('logout') }}">Uitloggen</a>
                             </div>
                         </li>
-                    </div>-->
+                    </div>
+                    {% endif %}
                 </ul>
             </div>
-
+            <!--
+            <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages" aria-selected="false">Messages</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Settings</a>
+                </li>
+              </ul>
+              
+              <div class="tab-content">
+                <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">...1</div>
+                <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">..2.</div>
+                <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">.4..</div>
+                <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">.3..</div>
+              </div>
+            -->
+              <script>
+                $(function () {
+                  $('#myTab li:last-child a').tab('show')
+                })
+              </script>
             <!-- content-->
             <div class="col-7">
                 {% for category, message in get_flashed_messages(with_categories=true) %}

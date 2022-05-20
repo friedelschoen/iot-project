@@ -16,7 +16,7 @@ class RegistrationForm(FlaskForm):
     phone = StringField('Telefoon', validators=[ DataRequired(), Length(min=5) ])
     street = StringField('Straat', validators=[ DataRequired() ])
     housenumber = IntegerField('Huisnummer', validators=[ DataRequired() ])
-    zipcode = StringField('Postcode', validators=[ DataRequired() ])
+    postcode = StringField('Postcode', validators=[ DataRequired() ])
     place = StringField('Plaats', validators=[ DataRequired() ])
     submit = SubmitField('Registeren')
 
