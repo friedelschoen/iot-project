@@ -1,0 +1,6 @@
+{
+    "board": "SODAQ:samd:sodaq_sara",
+    "programmer": "SODAQ:atmel_ice",
+    "port": "/dev/tty.usbmodem142301",
+    "sketch": "5g-board/5g-board.ino"
+}
