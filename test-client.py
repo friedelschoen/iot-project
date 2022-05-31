@@ -1,6 +1,9 @@
 import requests, random
 from optparse import OptionParser
 
+host = "muizenval.tk"
+port = 80
+
 parser = OptionParser()
 parser.add_option('-c', '--connect', action="store_true", help='ready to connect')
 parser.add_option('-s', '--status', type="choice", choices=[ "idle", "active" ], help='set status')
@@ -22,11 +25,11 @@ else:
 print('using mac:', mac)
 
 if opt.connect:
-	res = requests.post('http://0.0.0.0:5000/api/search_connect', json={ 'mac': mac })
+	res = requests.post(f'http://{host}:{port}/api/search_connect', json={ 'mac': mac })
 	print('->', res.json()['error'])
 elif opt.status == 'idle':
-	res = requests.post('http://0.0.0.0:5000/api/update_status', json={ 'mac': mac, 'status': False })
+	res = requests.post('http://{host}:{port}/api/update_status', json={ 'mac': mac, 'status': False })
 	print('->', res.json()['error'])
 else:
-	res = requests.post('http://0.0.0.0:5000/api/update_status', json={ 'mac': mac, 'status': True })
+	res = requests.post('http://{host}:{port}/api/update_status', json={ 'mac': mac, 'status': True })
 	print('->', res.json()['error'])

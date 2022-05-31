@@ -112,7 +112,7 @@ void setup() {
 
   char response[100];  
   while (sendCommand("AT+CSQ", response) == COMMAND_OK && strcmp(response, "+CSQ: 99,99")); // Check Siganl strenght, repeat till you have a valid CSQ (99,99 means no signal)
-  while (sendCommand("AT+CGATT?", response) == COMMAND_OK && !strcmp(response, "+CGATT: 1")); // Check Siganl strenght, repeat till you have a valid CSQ (99,99 means no signal)
+  while (sendCommand("AT+CGATT?", response) == COMMAND_OK && !strcmp(responhse, "+CGATT: 1")); // Check Siganl strenght, repeat till you have a valid CSQ (99,99 means no signal)
   
   usbSerial.println("Connected!");
 }
