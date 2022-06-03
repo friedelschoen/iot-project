@@ -74,7 +74,7 @@ class UpdateTrapForm(FlaskForm):
     submit = SubmitField('Bewerken')
 
 class ConnectTrapForm(FlaskForm):
-    mac = StringField('MAC', validators=[ Length(min=16, max=16) ])
+    code = StringField('Koppel-Code', validators=[ Length(min=16, max=16) ])
     submit = SubmitField('Verbinden')
 
 

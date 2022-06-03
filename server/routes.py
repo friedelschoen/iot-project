@@ -1,4 +1,4 @@
-import json
+import random
 import os
 import secrets
 from datetime import datetime, timedelta
@@ -49,14 +49,21 @@ def search_connect():
         return jsonify({ "error": "invalid-mac" })
     
     mac = request.json['mac'].lower()
-    
+
     trap = Trap.query.filter_by(mac=mac).first()
     if not trap:
         trap = Trap(mac=mac)
         db.session.add(trap)
 
+    code = ""
+    while True:
+        code = ''.join([ random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') for _ in range(5) ])
+        if not Trap.query.filter_by(connect_code=code).first():
+            break
+
     trap.owner = None
     trap.connect_expired = datetime.utcnow() + timedelta(minutes=5)
+    trap.connect_code = code
 
     db.session.commit()
 
@@ -183,14 +190,15 @@ def traps():
 @login_required
 def trap_connect():
     form = ConnectTrapForm()
-    if form.validate_on_submit() and form.mac.data:
-        trap = Trap.query.filter_by(mac=form.mac.data.replace(':', '').replace(' ', '').lower()).filter(Trap.connect_expired > datetime.utcnow()).first()
+    if form.validate_on_submit() and form.code.data:
+        trap = Trap.query.filter_by(mac=form.code.data.replace(':', '').replace(' ', '').lower()).filter(Trap.connect_expired > datetime.utcnow()).first()
         if not trap:
             flash('Muizenval niet gevonden', 'danger')
             return redirect(url_for('trap_connect'))
 
         trap.owner = current_user.id
         trap.connect_expired = None
+        trap.connect_code = None
         db.session.commit()
         flash('Muizenval toegevoegd!', 'success')
         return redirect(url_for('traps'))
