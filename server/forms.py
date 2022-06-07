@@ -1,8 +1,6 @@
-import re
-from tokenize import String
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
-from wtforms import BooleanField, HiddenField, PasswordField, StringField, SubmitField, IntegerField, SelectField
+from wtforms import BooleanField, PasswordField, StringField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 
 from .models import User

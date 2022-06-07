@@ -1,6 +1,4 @@
-from email.policy import default
 from enum import Enum
-import json
 from flask_login import UserMixin
 
 from .app import db, login_manager
