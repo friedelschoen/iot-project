@@ -1,5 +1,13 @@
 #pragma once
 
+// -*- prefixes -*-
+#define prefixInfo	"info  | "
+#define prefixDebug "debug | "
+#define prefixError "error | "
+#define prefixLine	"line  | "
+#define prefixWarn	"warn  | "
+#define prefixEvent "event | "
+
 // -*- hardware stuff -*-
 #define usbSerial	SerialUSB
 #define modemSerial Serial1
@@ -7,12 +15,12 @@
 #define enablePin	SARA_TX_ENABLE
 #define voltagePin	SARA_R4XX_TOGGLE
 
-
 // -*- behaviour settings -*-
 #define baud		   115200	 // baut-rate of modem-/usb-serial
-#define lineBuffer	   256		 // buffer-size (bytes) to use to store lines
+#define lineBuffer	   512		 // buffer-size (bytes) to use to store lines
 #define commandTimeout 10.0		 // seconds to cancel a command
 #define commandDelay   0.1		 // delay after every command
+#define ignoreDelay	   2		 // seconds to wait if command is run with COMMAND_IGNORE
 #define commandDebug   true		 // send debug information about command requests
 #define eventDebug	   true		 // print '+'-events
 #define lineDebug	   false	 // print each line to debug

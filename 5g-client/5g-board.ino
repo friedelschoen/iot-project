@@ -21,7 +21,7 @@ void setup() {
 
 
 	// -*- module initialization -*-
-	usbSerial.print("[INFO] waiting for module to start up");
+	usbSerial.print(prefixInfo "waiting for module to start up");
 	for (;;) {
 		usbSerial.print('.');
 		modemSerial.write("AT\r\n");
@@ -35,31 +35,31 @@ void setup() {
 
 	sendCommand("ATE0");	// disable command-echo
 
-	char info[256];
-	sendCommand("ATI", info);
-
-	usbSerial.println("[INFO] module information:");
-	usbSerial.println(info);
-
 	//	if (sendCommand("AT+CPIN=\"" SIM_PIN "\"") == COMMAND_ERROR) {
 	//		usbSerial.println("[EROR] sim can't be unlocked, wrong PIN");
 	//		return;
 	//	}
-	usbSerial.println("[INFO] sim successful unlocked");
+	usbSerial.println(prefixInfo "sim successful unlocked");
 
 	sendCommand("AT+CPSMS=0");	   // Disable Power Saving Mode
 	sendCommand("AT+CEDRXS=0");	   // Disable eDRX
-	usbSerial.println("[INFO] disabled power safe");
+	usbSerial.println(prefixInfo "disabled power safe");
 
 	// -*- internet initialization -*-
-	sendCommand("AT+CFUN=15", COMMAND_BLOCK);							 // Reset the module
-	sendCommand("AT+UMNOPROF=1", COMMAND_BLOCK);						 // Set MNO profile (1=automatic,100=standard europe)
-	sendCommand("AT+URAT=7,8");											 // Set URAT to LTE-M/NB-IOT
-	sendCommand("AT+CEREG=3", COMMAND_BLOCK);							 // Enable URCs
-	sendCommand("AT+CGDCONT=1,\"IP\",\"" simAPN "\"", COMMAND_BLOCK);	 // Set the APN
-	sendCommand("AT+COPS=0,2");											 // Autoselect the operator
+	char info[100];
 
-	usbSerial.print("[INFO] waiting for connection");
+	sendCommand("AT+CFUN=15", COMMAND_BLOCK);		// Reset the module
+	sendCommand("AT+UMNOPROF=1", COMMAND_BLOCK);	// Set MNO profile (1=automatic,100=standard europe)
+	sendCommand("AT+URAT?", info);
+	usbSerial.print(prefixInfo "urat: ");
+	usbSerial.println(info);
+	sendCommand("AT+URAT=8", COMMAND_IGNORE);							 // Set URAT to LTE-M/NB-IOT
+	sendCommand("AT+CEREG=3", COMMAND_IGNORE);							 // Enable URCs
+	sendCommand("AT+CGDCONT=1,\"IP\",\"" simAPN "\"", COMMAND_BLOCK);	 // Set the APN
+	sendCommand("AT+CFUN=1");											 // enable radio
+	sendCommand("AT+COPS=0,2", COMMAND_BLOCK);							 // Autoselect the operator
+
+	usbSerial.print(prefixInfo "waiting for connection");
 
 	char response[100];
 
@@ -76,7 +76,7 @@ void setup() {
 	}
 	usbSerial.println();
 
-	usbSerial.println("[INFO] connected!");
+	usbSerial.println(prefixInfo "connected!");
 
 	// -*- server connection -*-
 
@@ -94,7 +94,7 @@ AT+UHTTPC=0,5,"/api/search_connect","","TEST!",1
 	sendCommand("AT+UHTTPC=0,5,\"/api/search_connect\",\"\",\"TEST!\",1");
 
 
-	usbSerial.println("[INFO] initiation completed, starting passthrough:");
+	usbSerial.println(prefixInfo "initiation completed, starting passthrough:");
 }
 
 void loop() {

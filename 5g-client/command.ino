@@ -9,6 +9,7 @@ command_status sendCommand(const char* request, char* response, command_flags fl
 
 	bool silent		  = flags & COMMAND_SILENT,
 		 block		  = flags & COMMAND_BLOCK,
+		 ignore		  = flags & COMMAND_IGNORE,
 		 event_handle = flags & COMMAND_EVENT;
 
 	if (response)
@@ -22,7 +23,7 @@ command_status sendCommand(const char* request, char* response, command_flags fl
 	modemSerial.flush();
 
 	if (blockDebug && block && !silent) {
-		usbSerial.print("[DBUG] command '");
+		usbSerial.print(prefixDebug "command '");
 		usbSerial.print(request);
 		usbSerial.println("' is blocking");
 	}
@@ -32,9 +33,16 @@ command_status sendCommand(const char* request, char* response, command_flags fl
 		for (;;) {
 			while (!modemSerial.available()) {
 				now = millis();
-				if (!block && now - start > commandTimeout * 1000) {
+				if (ignore && now - start > ignoreDelay * 1000) {
 					if (commandDebug && !silent) {
-						usbSerial.print("[WARN] command '");
+						usbSerial.print(prefixDebug "command '");
+						usbSerial.print(request);
+						usbSerial.println("' succeed (ignoring response)");
+					}
+					return COMMAND_TIMEOUT;
+				} else if (!ignore && !block && now - start > commandTimeout * 1000) {
+					if (commandDebug && !silent) {
+						usbSerial.print(prefixWarn "command '");
 						usbSerial.print(request);
 						usbSerial.println("' timed out");
 					}
@@ -52,27 +60,27 @@ command_status sendCommand(const char* request, char* response, command_flags fl
 
 		if (String(line) == "OK") {
 			if (commandDebug && !silent) {
-				usbSerial.print("[DBUG] command '");
+				usbSerial.print(prefixDebug "command '");
 				usbSerial.print(request);
 				usbSerial.println("' succeed");
 			}
 			return COMMAND_OK;
 		} else if (strstr(line, "ERROR")) {
 			if (commandDebug && !silent) {
-				usbSerial.print("[WARN] command '");
+				usbSerial.print(prefixError "command '");
 				usbSerial.print(request);
 				usbSerial.println("' failed");
 			}
 			return COMMAND_ERROR;
 		} else if (event_handle && line[0] == '+') {
 			if (eventDebug && !silent) {
-				usbSerial.print("[EVNT] event '");
+				usbSerial.print(prefixEvent "event '");
 				usbSerial.print(line);
 				usbSerial.println(" caused'");
 			}
 		} else if (line[0] != '\0' && strcmp(request, line)) {
 			if (lineDebug && !silent) {
-				usbSerial.print("[LINE] ");
+				usbSerial.print(prefixLine);
 				usbSerial.print(request);
 				usbSerial.print(" -> '");
 				usbSerial.print(line);

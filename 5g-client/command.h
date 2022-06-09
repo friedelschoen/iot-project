@@ -11,7 +11,8 @@ enum command_flags {
 	COMMAND_NONE,				// none of them underneath
 	COMMAND_SILENT = 1 << 0,	// no debug messages (for looped commands)
 	COMMAND_BLOCK  = 1 << 1,	// no time-out (for waiting commands)
-	COMMAND_EVENT  = 1 << 2,	// handle '+'-responses as event
+	COMMAND_IGNORE = 1 << 2,	// don't wait for response, just wait $ignoreDelay secounds
+	COMMAND_EVENT  = 1 << 3,	// handle '+'-responses as event
 };
 
 // -*- declarations -*-
