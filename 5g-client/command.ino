@@ -1,6 +1,7 @@
 #include "command.h"
 #include "config.h"
 
+// -*- helper functions -*-
 command_status sendCommand(const char* request, char* response, command_flags flags) {
 	char   line[lineBuffer];
 	size_t lineLen;

@@ -1,5 +1,6 @@
 #pragma once
 
+// -*- enums and structs -*-
 enum command_status {
 	COMMAND_OK		= 0,	// command succeed
 	COMMAND_ERROR	= 1,	// command returned an error
@@ -13,5 +14,6 @@ enum command_flags {
 	COMMAND_EVENT  = 1 << 2,	// handle '+'-responses as event
 };
 
+// -*- declarations -*-
 command_status sendCommand(const char* request, char* response, command_flags flags = COMMAND_NONE);
 command_status sendCommand(const char* request, command_flags flags = COMMAND_NONE);

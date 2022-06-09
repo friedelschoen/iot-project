@@ -2,6 +2,7 @@
 #include "config.h"
 
 void setup() {
+	// -*- hardware initiation -*-
 	pinMode(powerPin, OUTPUT);		// Put voltage on the nb-iot module
 	pinMode(voltagePin, OUTPUT);	// Switch module voltage
 	pinMode(enablePin, OUTPUT);		// Set state to active
@@ -19,6 +20,7 @@ void setup() {
 		;
 
 
+	// -*- module initialization -*-
 	usbSerial.print("[INFO] waiting for module to start up");
 	for (;;) {
 		usbSerial.print('.');
@@ -49,7 +51,7 @@ void setup() {
 	sendCommand("AT+CEDRXS=0");	   // Disable eDRX
 	usbSerial.println("[INFO] disabled power safe");
 
-
+	// -*- internet initialization -*-
 	sendCommand("AT+CFUN=15", COMMAND_BLOCK);							 // Reset the module
 	sendCommand("AT+UMNOPROF=1", COMMAND_BLOCK);						 // Set MNO profile (1=automatic,100=standard europe)
 	sendCommand("AT+URAT=7,8");											 // Set URAT to LTE-M/NB-IOT
@@ -76,6 +78,8 @@ void setup() {
 
 	usbSerial.println("[INFO] connected!");
 
+	// -*- server connection -*-
+
 	/*
 AT+UHTTP=0,0,"86.92.67.21"
 
@@ -94,6 +98,7 @@ AT+UHTTPC=0,5,"/api/search_connect","","TEST!",1
 }
 
 void loop() {
+	// -*- passthrough for custom commands -*-
 	while (usbSerial.available())
 		modemSerial.write(usbSerial.read());
 
