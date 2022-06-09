@@ -1,5 +1,5 @@
 {
     "sketch": "5g-client/5g-board.ino",
     "board": "SODAQ:samd:sodaq_sara",
-    "port": "/dev/tty.usbmodem14201"
+    "port": "/dev/tty.usbmodem1D11101"
 }
