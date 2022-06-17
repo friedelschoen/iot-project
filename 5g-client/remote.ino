@@ -1,5 +1,5 @@
 #include "include/config.h"
-#include "include/passthrough.h"
+#include "include/remote.h"
 
 JSONVar readJSON() {
 	char line[lineBuffer];
@@ -20,7 +20,7 @@ JSONVar readJSON() {
 	return JSON.parse(line);
 }
 
-void passthrough::init() {
+void remote::init() {
 	usbSerial.println("{\"command\":\"hello\"}");
 	JSONVar res_json = readJSON();
 	if (res_json["error"] != nullptr) {
@@ -28,7 +28,7 @@ void passthrough::init() {
 	}
 }
 
-void passthrough::connect(const char* host, int port) {
+void remote::connect(const char* host, int port) {
 	JSONVar body;
 	body["command"] = "connect";
 	body["host"]	= host;
@@ -37,7 +37,7 @@ void passthrough::connect(const char* host, int port) {
 	usbSerial.println(body);
 }
 
-const char* passthrough::send(http_packet request, http_packet& response) {
+const char* remote::send(http_packet request, http_packet& response) {
 	JSONVar body;
 	body["command"]	 = "send";
 	body["method"]	 = request.method;
@@ -54,7 +54,7 @@ const char* passthrough::send(http_packet request, http_packet& response) {
 }
 
 
-const char* passthrough::send(http_packet request) {
+const char* remote::send(http_packet request) {
 	JSONVar body;
 	body["command"]	 = "send";
 	body["method"]	 = request.method;

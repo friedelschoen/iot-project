@@ -1,6 +1,6 @@
 #include "include/config.h"
 #include "include/modem.h"
-#include "include/passthrough.h"
+#include "include/remote.h"
 
 #include <Sodaq_LSM303AGR.h>
 #include <Sodaq_UBlox_GPS.h>
@@ -10,11 +10,13 @@
 #define BATVOLT_R2	10.0f
 #define BATVOLT_PIN BAT_VOLT
 
+#define statusDelay 5	 // seconds
+
 #define batteryFactor 0.978 / ADC_AREF*(BATVOLT_R1 / BATVOLT_R2 + 1)
 
 // sara_modem		modem;
 Sodaq_LSM303AGR accel;
-passthrough		pass;
+remote			pass;
 
 void setup() {
 	// -*- hardware initiation -*-
@@ -38,7 +40,7 @@ void setup() {
 	// Enable the Accelerometer
 	accel.enableAccelerometer();
 
-	pass.connect("muizenval.tk", 80);
+	pass.connect("127.0.0.1", 5000);
 
 	//	modem.send("ATE0");	   // disable command-echo
 
@@ -99,12 +101,12 @@ void setup() {
 		modem.send("AT+UHTTPC=0,5,\"/api/search_connect\",\"\",\"TEST!\",1");*/
 
 
-	// usbSerial.println(prefixInfo "initiation completed, starting passthrough:");
+	// usbSerial.println(prefixInfo "initiation completed, starting remote:");
 }
 
 
 void loop() {
-	/*	// -*- passthrough for custom commands -*-
+	/*	// -*- remote for custom commands -*-
 		while (usbSerial.available())
 			modemSerial.write(usbSerial.read());
 
@@ -119,31 +121,37 @@ void loop() {
 			// usbSerial.println(buffer);
 		}*/
 
+	static int last = 0;
+	int		   now	= millis();
+
 	static double lat = 0, lon = 0, accuracy = 0;
 
-	if (sodaq_gps.scan(true, 10000)) {
-		lat		 = sodaq_gps.getLat();
-		lon		 = sodaq_gps.getLon();
-		accuracy = 1.0 / sodaq_gps.getHDOP() * 100;
-		// -> 100% the best, 0% the worst
-		// usbSerial.print(sodaq_gps.getLat(), 13);
-		// usbSerial.print(" - ");
-		// usbSerial.print(sodaq_gps.getLon(), 13);
-		// usbSerial.print(" ~ accuracy ");
-		// usbSerial.print(1.0 / sodaq_gps.getHDOP() * 100, 1);
-		// usbSerial.println("%");
+	if (now - last > statusDelay * 1000) {
+		if (sodaq_gps.scan(true, 10000)) {
+			lat		 = sodaq_gps.getLat();
+			lon		 = sodaq_gps.getLon();
+			accuracy = 1.0 / sodaq_gps.getHDOP() * 100;
+			// -> 100% the best, 0% the worst
+			// usbSerial.print(sodaq_gps.getLat(), 13);
+			// usbSerial.print(" - ");
+			// usbSerial.print(sodaq_gps.getLon(), 13);
+			// usbSerial.print(" ~ accuracy ");
+			// usbSerial.print(1.0 / sodaq_gps.getHDOP() * 100, 1);
+			// usbSerial.println("%");
+		}
+
+		remote::http_packet req, res;
+		req.method				= "POST";
+		req.endpoint			= "/api/update";
+		req.body["latitude"]	= lat;
+		req.body["longitude"]	= lon;
+		req.body["accuracy"]	= accuracy;
+		req.body["battery"]		= batteryVoltage();
+		req.body["temperature"] = temperature();
+
+		pass.send(req);
+		last = now;
 	}
-
-	passthrough::http_packet req, res;
-	req.method				= "POST";
-	req.endpoint			= "/api/update";
-	req.body["latitude"]	= lat;
-	req.body["longitude"]	= lon;
-	req.body["accuracy"]	= accuracy;
-	req.body["battery"]		= batteryVoltage();
-	req.body["temperature"] = temperature();
-
-	pass.send(req);
 
 	// usbSerial.print(batteryVoltage());
 	// usbSerial.println("V battery");

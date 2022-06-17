@@ -2,7 +2,7 @@
 
 #include <Arduino_JSON.h>
 
-struct passthrough {
+struct remote {
 	struct http_packet {
 		const char* method;
 		const char* endpoint;

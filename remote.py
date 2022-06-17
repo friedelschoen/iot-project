@@ -22,19 +22,23 @@ def handle(req):
 	elif req['command'] == 'connect':
 		client = HTTPConnection(req['host'], req['port'])
 	elif req['command'] == 'send':
+		headers = req['headers'] or {}
+		headers['Content-Type'] = 'application/json'
 		if client is None:
 			return 'not connected'
-		client.request(req['method'], req['endpoint'], json.dumps(req['body']), req['headers'] or {})
+		client.request(req['method'], req['endpoint'], json.dumps(req['body']), headers)
 		res = client.getresponse()
 		return { 'code': res.status, 'headers': dict(res.headers), 'body': json.load(res) }
 	else:
 		return 'unknown command'
 
 while serial_port.is_open:
-	req = json.loads(serial_port.readline())
-
-	print('-> ' + repr(req))
-	res = handle(req)
+	try:
+		req = json.loads(serial_port.readline())
+		print('-> ' + repr(req))
+		res = handle(req)
+	except Exception as e:
+		res = { 'error': 'internal', 'description': str(e) }
 
 	if type(res) == str:
 		res = { "error": res }
