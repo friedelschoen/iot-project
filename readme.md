@@ -2,7 +2,10 @@
 
 > Hamdi Hassan, Loes Hoogstra, Gerco van Woudenberg, Friedel Schon
 
-## De server runnen
+# :warning: Disclaimer
+**Op Anaconda-python werkt niks (flask zou gewoon ophangen), dus gebruik de officiële Python-versie**
+
+## Server runnen
 
 Dit is een dev-server, dus run je met `debug=True`-flag!
 
@@ -37,6 +40,7 @@ $ python3 run-server.py
 $ python3 test-client.py --help
 ```
 
-## Known issues
+## Third-party libraries (Arduino Library Manager)
 
-- op Anaconda-python werkt niks (flask zou gewoon ophangen), dus gebruik de officiële Python-versie
+- https://github.com/SodaqMoja/Sodaq_LSM303AGR
+- https://github.com/SodaqMoja/Sodaq_UBlox_GPS

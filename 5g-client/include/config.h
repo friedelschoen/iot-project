@@ -1,19 +1,7 @@
 #pragma once
 
-// -*- prefixes -*-
-#define prefixInfo	"info  | "
-#define prefixDebug "debug | "
-#define prefixError "error | "
-#define prefixLine	"line  | "
-#define prefixWarn	"warn  | "
-#define prefixEvent "event | "
-
 // -*- hardware stuff -*-
-#define usbSerial	SerialUSB
-#define modemSerial Serial1
-#define powerPin	SARA_ENABLE
-#define enablePin	SARA_TX_ENABLE
-#define voltagePin	SARA_R4XX_TOGGLE
+#define usbSerial SerialUSB
 
 // -*- behaviour settings -*-
 #define baud		   115200	 // baut-rate of modem-/usb-serial
@@ -30,3 +18,11 @@
 // -*- sim settings -*-
 #define simPin "0000"				  // PIN of the sim
 #define simAPN "lpwa.vodafone.iot"	  // APN-network of the sim
+
+// -*- prefixes -*-
+#define prefixInfo	"info  | "
+#define prefixDebug "debug | "
+#define prefixError "error | "
+#define prefixLine	"line  | "
+#define prefixWarn	"warn  | "
+#define prefixEvent "event | "

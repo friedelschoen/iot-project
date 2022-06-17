@@ -1,3 +1,10 @@
 {
 	"C_Cpp.intelliSenseEngine": "Default",
+	"files.associations": {
+		".clang-format": "json",
+		".clangd": "yaml",
+		".yabairc": "shellscript",
+		"v.mod": "plaintext",
+		"limits": "cpp"
+	},
 }
