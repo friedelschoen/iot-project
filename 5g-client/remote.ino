@@ -1,7 +1,7 @@
 #include "include/config.h"
 #include "include/remote.h"
 
-JSONVar readJSON() {
+static JSONVar readJSON() {
 	char line[lineBuffer];
 	char buf;
 	int	 i = 0;
@@ -20,7 +20,7 @@ JSONVar readJSON() {
 	return JSON.parse(line);
 }
 
-void remote::init() {
+void serial_remote::begin() {
 	usbSerial.println("{\"command\":\"hello\"}");
 	JSONVar res_json = readJSON();
 	if (res_json["error"] != nullptr) {
@@ -28,7 +28,11 @@ void remote::init() {
 	}
 }
 
-void remote::connect(const char* host, int port) {
+bool serial_remote::available() {
+	return usbSerial;
+}
+
+void serial_remote::connect(const char* host, int port) {
 	JSONVar body;
 	body["command"] = "connect";
 	body["host"]	= host;
@@ -37,7 +41,7 @@ void remote::connect(const char* host, int port) {
 	usbSerial.println(body);
 }
 
-const char* remote::send(http_packet request, http_packet& response) {
+const char* serial_remote::send(http_packet request, http_packet& response) {
 	JSONVar body;
 	body["command"]	 = "send";
 	body["method"]	 = request.method;
@@ -54,7 +58,7 @@ const char* remote::send(http_packet request, http_packet& response) {
 }
 
 
-const char* remote::send(http_packet request) {
+const char* serial_remote::send(http_packet request) {
 	JSONVar body;
 	body["command"]	 = "send";
 	body["method"]	 = request.method;

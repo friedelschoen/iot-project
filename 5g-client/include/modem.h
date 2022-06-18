@@ -1,10 +1,6 @@
 #pragma once
 
-#define modemSerial		Serial1
-#define modemPowerPin	SARA_ENABLE
-#define modemEnablePin	SARA_TX_ENABLE
-#define modemVoltagePin SARA_R4XX_TOGGLE
-
+#include "config.h"
 
 struct sara_modem {
 	// -*- enums and structs -*-

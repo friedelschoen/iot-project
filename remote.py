@@ -1,16 +1,16 @@
 from http.client import HTTPConnection
-from typing import Optional
 
 import serial
 import sys
 import json
 
 if len(sys.argv) < 2:
-	print(f'{sys.argv[0]} <port>')
+	print(f'{sys.argv[0]} <serial>')
 
-serial_port = serial.Serial(port=sys.argv[1], baudrate=115200)
+server_address = ''
+serial_port = serial.Serial(port=sys.argv[2], baudrate=115200)
 
-client: Optional[HTTPConnection] = None
+client = None
 
 def handle(req):
 	global client
@@ -35,10 +35,11 @@ def handle(req):
 while serial_port.is_open:
 	try:
 		req = json.loads(serial_port.readline())
-		print('-> ' + repr(req))
 		res = handle(req)
 	except Exception as e:
+		req = '<error>'
 		res = { 'error': 'internal', 'description': str(e) }
+	print('-> ' + repr(req))
 
 	if type(res) == str:
 		res = { "error": res }

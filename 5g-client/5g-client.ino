@@ -12,23 +12,23 @@
 
 #define statusDelay 5	 // seconds
 
-#define batteryFactor 0.978 / ADC_AREF*(BATVOLT_R1 / BATVOLT_R2 + 1)
+#define batteryFactor (0.978 * (BATVOLT_R1 / BATVOLT_R2 + 1) / ADC_AREF)
 
-// sara_modem		modem;
+sara_modem		modem;
 Sodaq_LSM303AGR accel;
-remote			pass;
+serial_remote	remote;
 
 void setup() {
 	// -*- hardware initiation -*-
 
 	usbSerial.begin(baud);
-	while (usbWait && !usbSerial)
-		;
+	//	while (usbWait && !usbSerial)
+	//		;
 
 	pinMode(BATVOLT_PIN, INPUT);
 
 	//	modem.init();
-	pass.init();
+	remote.begin();
 
 	Wire.begin();
 	delay(1000);
@@ -40,7 +40,7 @@ void setup() {
 	// Enable the Accelerometer
 	accel.enableAccelerometer();
 
-	pass.connect("127.0.0.1", 5000);
+	remote.connect("127.0.0.1", 5000);
 
 	//	modem.send("ATE0");	   // disable command-echo
 
@@ -140,7 +140,7 @@ void loop() {
 			// usbSerial.println("%");
 		}
 
-		remote::http_packet req, res;
+		serial_remote::http_packet req, res;
 		req.method				= "POST";
 		req.endpoint			= "/api/update";
 		req.body["latitude"]	= lat;
@@ -149,7 +149,7 @@ void loop() {
 		req.body["battery"]		= batteryVoltage();
 		req.body["temperature"] = temperature();
 
-		pass.send(req);
+		remote.send(req);
 		last = now;
 	}
 
