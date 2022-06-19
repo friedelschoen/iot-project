@@ -4,13 +4,14 @@
 
 #include <Sodaq_LSM303AGR.h>
 #include <Sodaq_UBlox_GPS.h>
+#include <Wire.h>
 
 #define ADC_AREF	3.3f
 #define BATVOLT_R1	4.7f
 #define BATVOLT_R2	10.0f
 #define BATVOLT_PIN BAT_VOLT
 
-#define statusDelay 5	 // seconds
+#define statusDelay 0.5	   // seconds
 
 #define batteryFactor (0.978 * (BATVOLT_R1 / BATVOLT_R2 + 1) / ADC_AREF)
 
@@ -21,11 +22,12 @@ serial_remote	remote;
 void setup() {
 	// -*- hardware initiation -*-
 
-	usbSerial.begin(baud);
-	//	while (usbWait && !usbSerial)
-	//		;
+	usbSerial.begin(remoteBaud);
+	while (usbWait && !usbSerial)
+		;
 
 	pinMode(BATVOLT_PIN, INPUT);
+	pinMode(CHARGER_STATUS, INPUT);
 
 	//	modem.init();
 	remote.begin();
@@ -143,6 +145,7 @@ void loop() {
 		serial_remote::http_packet req, res;
 		req.method				= "POST";
 		req.endpoint			= "/api/update";
+		req.body["charging"]	= (bool) digitalRead(CHARGER_STATUS);
 		req.body["latitude"]	= lat;
 		req.body["longitude"]	= lon;
 		req.body["accuracy"]	= accuracy;

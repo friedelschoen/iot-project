@@ -10,7 +10,7 @@ void sara_modem::init() {
 	digitalWrite(modemPowerPin, HIGH);
 	digitalWrite(modemVoltagePin, LOW);
 	digitalWrite(modemEnablePin, HIGH);
-	modemSerial.begin(baud);
+	modemSerial.begin(modemBaud);
 
 	while (!modemSerial)
 		;

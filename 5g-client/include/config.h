@@ -8,7 +8,8 @@
 #define modemVoltagePin SARA_R4XX_TOGGLE	// modem voltage pin
 
 // -*- behaviour settings -*-
-#define remoteBaut		   115200	 // baut-rate of modem-/usb-serial
+#define remoteBaud		   115200	 // baud-rate of usb-serial
+#define modemBaud		   115200	 // baud-rate of modem-serial
 #define remoteFirstTimeout 5.0		 // seconds to wait for the first timeout
 #define remoteTimeout	   1.0		 // seconds to wait for remote to timeout
 #define lineBuffer		   512		 // buffer-size (bytes) to use to store lines
