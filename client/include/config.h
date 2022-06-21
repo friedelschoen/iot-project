@@ -1,11 +1,14 @@
 #pragma once
 
+#include <FlashStorage.h>
+
 // -*- hardware stuff -*-
 #define usbSerial		SerialUSB			// usb serial port
 #define modemSerial		Serial1				// modem serial port
 #define modemPowerPin	SARA_ENABLE			// modem power pin
 #define modemEnablePin	SARA_TX_ENABLE		// modem enable pin
 #define modemVoltagePin SARA_R4XX_TOGGLE	// modem voltage pin
+#define trapPin			10					// pin of magnet-sensor
 
 // -*- behaviour settings -*-
 #define remoteBaud		   115200	 // baud-rate of usb-serial
@@ -22,13 +25,19 @@
 #define lineDebug		   false	 // print each line to debug
 #define blockDebug		   true		 // print if command is blocking
 #define blinkInterval	   0.25		 // seconds to wait for blink
-#define gpsTimeout		   10		 // seconds to gps-timeout
+#define gpsTimeout		   5		 // seconds to gps-timeout
+#define statusInterval	   5		 // send status every n seconds
+
+#define ADC_AREF	  3.3f
+#define BATVOLT_R1	  4.7f
+#define BATVOLT_R2	  10.0f
+#define BATVOLT_PIN	  BAT_VOLT
+#define batteryFactor (0.978 * (BATVOLT_R1 / BATVOLT_R2 + 1) / ADC_AREF)
 
 // -*- sim settings -*-
-#define macAddress	"CAFEBABE01234567"	   // the boards mac-address
-#define simPin		"0000"				   // PIN of the sim
-#define simAPN		"lpwa.vodafone.iot"	   // APN-network of the sim
-#define apiHostname "muizenval.tk"
+//#define simPin		"0000"				   // PIN of the sim
+//#define simAPN		"lpwa.vodafone.iot"	   // APN-network of the sim
+//#define apiHostname "muizenval.tk"
 
 // -*- prefixes -*-
 #define prefixInfo	"info  | "
@@ -37,3 +46,20 @@
 #define prefixLine	"line  | "
 #define prefixWarn	"warn  | "
 #define prefixEvent "event | "
+
+
+struct configuration {
+	bool valid;
+
+	char simPIN[4];
+	char simPUK[8];
+	char simAPN[50];
+	char domain[50];
+
+	char userToken[16];
+};
+
+extern FlashStorageClass<configuration> config_flash;
+
+extern configuration config_default;
+extern configuration config_current;
