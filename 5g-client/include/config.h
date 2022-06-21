@@ -10,6 +10,7 @@
 // -*- behaviour settings -*-
 #define remoteBaud		   115200	 // baud-rate of usb-serial
 #define modemBaud		   115200	 // baud-rate of modem-serial
+#define remoteForce		   true		 // do not try connect to modem
 #define remoteFirstTimeout 5.0		 // seconds to wait for the first timeout
 #define remoteTimeout	   1.0		 // seconds to wait for remote to timeout
 #define lineBuffer		   512		 // buffer-size (bytes) to use to store lines
@@ -20,12 +21,14 @@
 #define eventDebug		   true		 // print '+'-events
 #define lineDebug		   false	 // print each line to debug
 #define blockDebug		   true		 // print if command is blocking
-#define usbWait			   true		 // wait for a usb-connection
+#define blinkInterval	   0.25		 // seconds to wait for blink
+#define gpsTimeout		   10		 // seconds to gps-timeout
 
 // -*- sim settings -*-
-#define macAddress "CAFEBABE01234567"	  // the boards mac-address
-#define simPin	   "0000"				  // PIN of the sim
-#define simAPN	   "lpwa.vodafone.iot"	  // APN-network of the sim
+#define macAddress	"CAFEBABE01234567"	   // the boards mac-address
+#define simPin		"0000"				   // PIN of the sim
+#define simAPN		"lpwa.vodafone.iot"	   // APN-network of the sim
+#define apiHostname "muizenval.tk"
 
 // -*- prefixes -*-
 #define prefixInfo	"info  | "

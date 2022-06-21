@@ -14,16 +14,15 @@ temperature = 0
 def update():	
 	global latitude, longitude, accuracy, battery, temperature
 
-	if request.is_json:
-		req = cast(dict, request.get_json())
-		latitude = req['latitude']
-		longitude = req['longitude']
-		accuracy = req['accuracy']
-		battery = req['battery']
-		temperature = req['temperature']
-		return {}
-
-	return {"error": "request must be json"}, 415
+	req = request.get_json(True)
+	if not req:
+		return
+	latitude = req['latitude']
+	longitude = req['longitude']
+	accuracy = req['accuracy']
+	battery = req['battery']
+	temperature = req['temperature']
+	return {}
 
 @app.get("/")
 def index():
