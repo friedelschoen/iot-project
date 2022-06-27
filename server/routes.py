@@ -81,6 +81,11 @@ def index():
 def about():
     return render_template('about.html', title='Over ons')
 
+""" home.html route """
+@app.route("/home")
+def about():
+    return render_template('home.html', title='Home')
+
 """ register.html route """
 @app.route("/register", methods=['GET', 'POST'])
 def register():
