@@ -1,29 +1,20 @@
-from typing import cast
-from flask import Flask, request, jsonify
+from flask import json
+from werkzeug.exceptions import HTTPException
+from flask import Flask, request
 
 app = Flask(__name__)
 
-latitude = 0
-longitude = 0
-accuracy = 0
-battery = 0
-temperature = 0
-
+status = {}
 
 @app.post("/api/update")
 def update():	
-	global latitude, longitude, accuracy, battery, temperature
+	global status
 
-	if request.is_json:
-		req = cast(dict, request.get_json())
-		latitude = req['latitude']
-		longitude = req['longitude']
-		accuracy = req['accuracy']
-		battery = req['battery']
-		temperature = req['temperature']
-		return {}
-
-	return {"error": "request must be json"}, 415
+	req = request.get_json(True)
+	if not req:
+		return
+	status = req
+	return {}
 
 @app.get("/")
 def index():
@@ -36,7 +27,7 @@ def index():
    crossorigin=""></script>
 
 	<h1>Status update</h1>
-	<p>latitude: <code>{latitude:.10f}</code></p>
+	<p>latitude: <code>{status['']:.10f}</code></p>
 	<p>longitude: <code>{longitude:.10f}</code></p>
 	<p>accuracy: <code>{accuracy:.2f}%</code></p>
 	<p>battery: <code>{battery}V</code></p>
@@ -53,5 +44,16 @@ def index():
 	var marker = L.marker([{latitude}, {longitude}]).addTo(map);
 	</script>
 	'''
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    response = e.get_response()
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
 
 app.run('0.0.0.0', 5000)

@@ -5,6 +5,7 @@
 		".clangd": "yaml",
 		".yabairc": "shellscript",
 		"v.mod": "plaintext",
-		"limits": "cpp"
+		"limits": "cpp",
+		"typeinfo": "cpp"
 	},
 }

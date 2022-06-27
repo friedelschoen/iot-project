@@ -1,55 +1,37 @@
 from http.client import HTTPConnection
 
 import serial
+import random
 import sys
 import json
 
 if len(sys.argv) < 2:
 	print(f'{sys.argv[0]} <serial>')
 
-server_address = ''
-serial_port = serial.Serial(port=sys.argv[2], baudrate=115200)
+server_address = 'localhost', 5000
+serial_port = serial.Serial(port=sys.argv[1], baudrate=115200)
+debug_chars = '0123456789abcdefghijklmnopqrstuvwxyz'
 
-client = None
+client = HTTPConnection(server_address[0], server_address[1])
 
-def handle(req):
-	global client
-
-	if 'command' not in req:
-		return 'command ommitted'
-	elif req['command'] == 'hello':
-		return None
-	elif req['command'] == 'connect':
-		client = HTTPConnection(req['host'], req['port'])
-	elif req['command'] == 'send':
-		headers = req['headers'] or {}
-		headers['Content-Type'] = 'application/json'
-		if client is None:
-			return 'not connected'
-		client.request(req['method'], req['endpoint'], json.dumps(req['body']), headers)
-		res = client.getresponse()
-		return { 'code': res.status, 'headers': dict(res.headers), 'body': json.load(res) }
-	else:
-		return 'unknown command'
+debug_token = ''.join(random.choice(debug_chars) for _ in range(16))
 
 while serial_port.is_open:
 	try:
-		req = json.loads(serial_port.readline())
-		res = handle(req)
-	except Exception as e:
-		req = '<error>'
-		res = { 'error': 'internal', 'description': str(e) }
-	print('-> ' + repr(req))
+		command, params_raw = serial_port.readline().decode().split(' ', 1)
+		params = json.loads(params_raw)
 
-	if type(res) == str:
-		res = { "error": res }
-	elif res is None:
-		res = { "error": None }
-	elif type(res) == dict:
-		if 'error' not in res:
-			res['error'] = None
-	else:
-		res = { "error": None, "value": res }
-	print('<- ' + repr(res))
+		if command == 'hello':
+			serial_port.write(f'ok {json.dumps(dict(debugToken=debug_token))}\n'.encode())
+		elif command == 'send':
+			method, endpoint, body = params["method"], params["endpoint"], params["body"]
+			print(f'-> {method} {endpoint} {body}')
 
-	serial_port.write((json.dumps(res) + '\n').encode())
+			client.request(method, endpoint, json.dumps(body))
+			res = client.getresponse()
+			response = res.read().decode()
+			print(f'<- {res.status} {response}')
+
+			serial_port.write(f'ok {json.dumps(dict(code=res.status, body=response))}\n'.encode())
+	except:
+		serial_port.write(b'0 {}\n')

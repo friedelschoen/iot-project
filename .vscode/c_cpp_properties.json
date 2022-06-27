@@ -23,6 +23,7 @@
                 "/Users/friedel/Library/Arduino15/packages/arduino/tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL/",
                 "/Users/friedel/Library/Arduino15/packages/SODAQ/hardware/samd/1.8.9/cores/arduino",
                 "/Users/friedel/Library/Arduino15/packages/SODAQ/hardware/samd/1.8.9/variants/sodaq_sara",
+                "/Users/friedel/Documents/Arduino/libraries/FlashStorage/src",
                 "/Users/friedel/Documents/Arduino/libraries/Arduino_JSON/src",
                 "/Users/friedel/Documents/Arduino/libraries/Sodaq_LSM303AGR/src",
                 "/Users/friedel/Library/Arduino15/packages/SODAQ/hardware/samd/1.8.9/libraries/Wire",

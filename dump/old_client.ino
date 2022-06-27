@@ -1,4 +1,5 @@
 #include "include/config.h"
+#include "include/http.h"
 #include "include/modem.h"
 #include "include/remote.h"
 
@@ -15,6 +16,8 @@
 
 #define batteryFactor (0.978 * (BATVOLT_R1 / BATVOLT_R2 + 1) / ADC_AREF)
 
+interface http;
+
 sara_modem		modem;
 Sodaq_LSM303AGR accel;
 serial_remote	remote;
@@ -23,7 +26,7 @@ void setup() {
 	// -*- hardware initiation -*-
 
 	usbSerial.begin(remoteBaud);
-	while (usbWait && !usbSerial)
+	while (true && !usbSerial)
 		;
 
 	pinMode(BATVOLT_PIN, INPUT);
