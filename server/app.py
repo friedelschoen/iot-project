@@ -4,17 +4,23 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 
+domain = 'muizenval.tk'
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'iot_project'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-socket = SocketIO(app)
+socket = SocketIO(app, logger=True)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
+#sslify = SSLify(app)
+#ssl_files = ('ssl/public.crt', 'ssl/private.key')
 
 # to run 'routes.py' and make the routes available
-from .routes import *
-from .models import *
+# '#noqa' is nessesary for my formatter to not put them to the top!
+from .models import *  # noqa
+from .routes import *  # noqa
+from .socket import *  # noqa

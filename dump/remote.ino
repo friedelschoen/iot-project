@@ -26,6 +26,7 @@ void serial_remote::begin() {
 	if (res_json["error"] != nullptr) {
 		// :(
 	}
+	write
 }
 
 bool serial_remote::available() {

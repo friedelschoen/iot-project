@@ -39,14 +39,17 @@
         crossorigin=""></script>
 
     <script type="text/javascript" charset="utf-8">
-        var socket = io();
-        var current_user = {{ current_user.id if current_user.is_authenticated else none | tojson }};
-//        socket.on('connect', function () { });
+        {% if user_token %}
+        var userToken = {{ user_token | tojson }};
+        {% else %}
+        var userToken = null;
+        {% endif %}
+
         $('.dropdown-toggle').dropdown()
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('li.active a').removeClass('active');
-            $('a[href="' + location.pathname + '"]').closest('li ').addClass('active'); 
+            $('a[href="' + location.pathname + '"]').closest('li ').addClass('active');
         });
     </script>
 
@@ -94,14 +97,14 @@
                         <a class="nav-link" href="{{ url_for('traps') }}">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('trap_connect') }}">Koppel een val</a>
+                        <a class="nav-link" href="#">Koppel een val</a>
                     </li>
                     {% if current_user.contact %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('contact') }}">Contact opnemen</a>
                     </li>
                     {% endif %}
-                    {% if current_user.type.name == 'ADMIN' %}
+                    {% if current_user.admin %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin') }}">Gebruikers beheerden</a>
                     </li>
@@ -152,11 +155,11 @@
                 <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">.3..</div>
               </div>
             -->
-              <script>
+            <script>
                 $(function () {
-                  $('#myTab li:last-child a').tab('show')
+                    $('#myTab li:last-child a').tab('show')
                 })
-              </script>
+            </script>
             <!-- content-->
             <div class="col-7">
                 {% for category, message in get_flashed_messages(with_categories=true) %}

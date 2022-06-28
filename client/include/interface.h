@@ -31,17 +31,19 @@ struct interface {
 	bool remoteReady = false;
 	bool modemReady	 = false;
 
-	char debugToken[16];
-
 	void beginModem();
 
 	void beginRemote();
 	void endRemote();
 
   public:
+	char token[17];
+
+	json request, response;
+
 	void begin();
 
-	int send(method method, const char* endpoint, json body = nullptr, json& response = null_response);
+	int send(method method, const char* endpoint);
 
 	command_status remote(const char* command, json params = nullptr, json& response = null_response, command_flags flags = COMMAND_NONE);
 

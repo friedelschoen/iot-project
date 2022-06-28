@@ -1,88 +1,65 @@
 {% extends "layout.html" %}
 {% block content %}
-<article class="media content-section">
-    <div class="media-body">
-        <h1 style="text-align:center;">Dashboard</h1>
-        <div id="trap-map"></div>
-    </div>
-</article>
-{% for trap in traps %}
-<article class="media content-section">
-    <div class="media-body">
-        <h3><a class="article-title" href="{{ url_for('trap_update', trap_id=trap.mac) }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="{{ trap.status_color() }}"
-                    class="bi bi-circle-fill" viewBox="0 0 20 20">
-                    <circle cx="10" cy="10" r="10" />
-                </svg>
-                -
-                {% if trap.name %}
-                {{ trap.name }}
-                {% else %}
+<div id="trap-container">
+    <article class="media content-section">
+        <div class="media-body">
+            <h1 style="text-align:center;">Dashboard</h1>
+            <div id="trap-map"></div>
+        </div>
+    </article>
+    {#}
+    {% for trap in traps %}
+    <article class="media content-section">
+        <div class="media-body">
+            <h3><a class="article-title" href="{{ url_for('trap_update', trap_id=trap.mac) }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="{{ trap.status_color() }}"
+                        class="bi bi-circle-fill" viewBox="0 0 20 20">
+                        <circle cx="10" cy="10" r="10" />
+                    </svg>
+                    -
+                    {% if trap.name %}
+                    {{ trap.name }}
+                    {% else %}
+                    <code>[{{ trap.pretty_mac() }}]</code>
+                    {% endif %}
+                </a>
+            </h3>
+            {% if trap.name %}
+            <p>
                 <code>[{{ trap.pretty_mac() }}]</code>
-                {% endif %}
-            </a>
-        </h3>
-        {% if trap.name %}
-        <p>
-            <code>[{{ trap.pretty_mac() }}]</code>
-        </p>
-        {% endif %}
-        {% if trap.owner %}
-        <b>
-            van {{ trap.owner_class().name }}
-        </b>
-        {% endif %}
-    </div>
-
-    {#} <div class="media-body">
-        <h3>Naam: {{ trap.name }}</h3>
-        <p> Mac adres: {{ trap.mac }} </p>
-        {% if trap.caught %}
-        <p> Status: Gevangen! </p>
-        {% else %}
-        <p>Status: Leeg!</p>
-        {% endif %}
-    </div>{#}
-</article>
-{% endfor %}
-
-<script type="text/javascript">
-    function prettyMAC(str) {
-        var res = []
-
-        for (var i = 0; i < 16; i += 2) {
-            res.push(str.substr(i, 2).toUpperCase())
-        }
-
-        return res.join(':')
-    }
-
-    socket.on('trap-change', function (data) {
-        if (data['user'] == current_user)
-            location.reload();
-    });
-
-    //    var trap_macs = [
-    /* {% for trap in traps %} */
-    //"{{ trap.mac }}" }
-    /* {% endfor %} */
-    //];
-
-    var traps = {{ trap_json | tojson }};
-
-    var map = L.map('trap-map').setView([52.283333, 5.666667], 7);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    for (var index in traps) {
-        var trap = traps[index];
-        if (trap.location_lat && trap.location_lon) {
-            L.marker([trap.location_lat, trap.location_lon])
-                .addTo(map)
-                .bindPopup(`[${prettyMAC(trap.mac)}] ${trap.name || ''}`);
-        }
-    }
-</script>
+            </p>
+            {% endif %}
+            {% if trap.owner %}
+            <b>
+                van {{ trap.owner_class().name }}
+            </b>
+            {% endif %}
+        </div>
+    </article>
+    {% endfor %}
+    {#}
+</div>
+<template id="trap-template">
+    <article class="media content-section">
+        <div class="media-body">
+            <h3><a class="article-title link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="bi bi-circle-fill"
+                        viewBox="0 0 20 20">
+                        <circle cx="10" cy="10" r="10" />
+                    </svg>
+                    -
+                    <span class="name"></span>
+                </a>
+            </h3>
+            <b>
+                van <span class="owner"></span>
+            </b>
+            <p>Battery: <span class="battery"></span></p>
+            <p>Charging: <span class="charging"></span></p>
+            <p>Accuracy: <span class="accuracy"></span>% (<span class="satellites"></span> satellites)</p>
+            <p>Temperature: <span class="temperature"></span>&deg;C</p>
+        </div>
+    </article>
+</template>
+<script type="text/javascript" src="{{ url_for('static', filename='trap.js') }}"></script>
 {% endblock content %}

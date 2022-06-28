@@ -98,6 +98,7 @@ a.article-title:hover {
 
 #trap-map { 
   height: 300px; 
+  border: #aaa solid 1px;
 }
 
 #sidebar {
