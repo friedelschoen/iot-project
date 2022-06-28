@@ -34,10 +34,15 @@ void setup() {
 	}
 
 	bool save = false;
-	if (client.response.hasOwnProperty("token"))
+	if (client.response.hasOwnProperty("token")) {
 		strcpy(config.token, (const char*) client.response["token"]), save = true;
+		json req;
+		req["token"] = config.token;
+		client.remote("set-token", req);
+	}
 	if (client.response.hasOwnProperty("domain"))
 		strcpy(config.domain, (const char*) client.response["domain"]), save = true;
+
 
 	if (save)
 		config.save();
