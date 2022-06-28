@@ -58,55 +58,43 @@
 </head>
 
 <body>
-    
+    <div class="sidebar" id="side_nav">
+        <div class="header-box px-2 pt-3 pb-4">
+            <h1 class="fs-4"><span class="bg-white text-dark rounded shadow px-2 me-2">B</span> <span class="text-white">BENNI</span></h1>
+        </div>
 
-    <div class="main-container d-flex">
-        <div class="sidebar" id="side_nav">
-          <div class="header-box px-2 pt-3 pb-4">
-              <h1 class="fs-4"><span class="bg-white text-dark rounded shadow px-2 me-2">B</span> <span class="text-white">BENNI</span></h1>
-              
-          </div>
-  
-          <ul class="list-unstyled px-2">
-        {% if current_user.is_authenticated %}
-          <li class=""><a href="{{ url_for('traps') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-tachometer-alt"></i>Dashboard</a></li>
-          <li class=""><a href="{{ url_for('trap_connect') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-plug"></i>Koppel een val</a></li>
-          <li class=""><a href="{{ url_for('contact') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-address-book"></i>Contact opnemen</a></li>
-        {% endif %}
-          
-        <li class=""><a href="#" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-map-marker-question"></i>Home</a></li>
-          <li class=""><a href="{{ url_for('about') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-map-marker-question"></i>Over ons</a></li>
-          
-          </ul>
-          <hr class="h-color mx-2">
-  
-          <ul class="list-unstyled px-2">
-        {% if current_user.is_authenticated %}
-          <li class=""><a href="{{ url_for('account') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-cogs"></i>Instellingen</a></li>
-          <li class=""><a href="{{ url_for('logout') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-sign-out"></i>Uitloggen</a></li>
-        {% else %}
-        <li class=""><a href="{{ url_for('login') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-sign-out"></i>Inloggen</a></li>
-        <li class=""><a href="{{ url_for('register') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-sign-out"></i>Registeren</a></li>
-        {% endif %}
+        <ul class="list-unstyled px-2">
+            <li class=""><a href="{{ url_for('index') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-map-marker-question"></i>Home</a></li>
+            {% if current_user.is_authenticated %}
+            <li class=""><a href="{{ url_for('traps') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-tachometer-alt"></i>Dashboard</a></li>
+            <li class=""><a href="{{ url_for('trap_connect') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-plug"></i>Koppel een val</a></li>
+            <li class=""><a href="{{ url_for('contact') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-address-book"></i>Contact opnemen</a></li>
+            {% endif %}
+            <li class=""><a href="{{ url_for('about') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-map-marker-question"></i>Over ons</a></li>
         </ul>
         <hr class="h-color mx-2">
-  
-    </div>
-            <!-- content-->
-            <div class="col-7">
-                {% for category, message in get_flashed_messages(with_categories=true) %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-                {% block content %}{% endblock %}
-            </div>
 
-
-    <script> src="https:://cdn.jsdelivr.net/npm/ootstrapp@5.0.2/dist/js/bootstrap.bundle.min.js"</script>
-    <script> src="https://ajax/googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"</script>
-      
-
+        <ul class="list-unstyled px-2">
+            {% if current_user.is_authenticated %}
+                <li class=""><a href="{{ url_for('account') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-cogs"></i>Instellingen</a></li>
+                <li class=""><a href="{{ url_for('logout') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-sign-out"></i>Uitloggen</a></li>
+            {% else %}
+                <li class=""><a href="{{ url_for('login') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-sign-out"></i>Inloggen</a></li>
+                <li class=""><a href="{{ url_for('register') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-sign-out"></i>Registeren</a></li>
+            {% endif %}
+        </ul>
+            <hr class="h-color mx-2">
+    </div>            
+    <div class="content">
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% block content %}
+        
+        {% endblock %}
+    </div>   
 </body>
 
 </html>
