@@ -5,28 +5,38 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationE
 
 from .models import User
 
+current_user: User
+
 """ registration form for register.html """
+
+
 class RegistrationForm(FlaskForm):
-    name = StringField('Naam', validators=[ DataRequired(), Length(min=5, max=20) ])
-    email = StringField('E-Mail', validators=[ DataRequired(), Email() ])
-    password = PasswordField('Wachtwoord', validators=[ DataRequired() ])
-    confirm_password = PasswordField('Wachtwoord herhalen', validators=[ DataRequired(), EqualTo('password') ])
-    phone = StringField('Telefoon', validators=[ DataRequired(), Length(min=5) ])
-    street = StringField('Straat', validators=[ DataRequired() ])
-    housenumber = IntegerField('Huisnummer', validators=[ DataRequired() ])
-    postcode = StringField('Postcode', validators=[ DataRequired() ])
-    place = StringField('Plaats', validators=[ DataRequired() ])
+    name = StringField('Naam', validators=[
+                       DataRequired(), Length(min=5, max=20)])
+    email = StringField('E-Mail', validators=[DataRequired(), Email()])
+    password = PasswordField('Wachtwoord', validators=[DataRequired()])
+    confirm_password = PasswordField('Wachtwoord herhalen', validators=[
+                                     DataRequired(), EqualTo('password')])
+    phone = StringField('Telefoon', validators=[DataRequired(), Length(min=5)])
+    street = StringField('Straat', validators=[DataRequired()])
+    housenumber = IntegerField('Huisnummer', validators=[DataRequired()])
+    postcode = StringField('Postcode', validators=[DataRequired()])
+    place = StringField('Plaats', validators=[DataRequired()])
     submit = SubmitField('Registeren')
 
     """ validates whether name is already in use """
+
     def validate_name(self, name):
         if User.query.filter_by(name=name.data).first():
-            raise ValidationError('Deze gebruikersnaam bestaat al, kies een andere.')
+            raise ValidationError(
+                'Deze gebruikersnaam bestaat al, kies een andere.')
 
     """ validates whether e-mail is already in use """
+
     def validate_email(self, email):
         if User.query.filter_by(email=email.data).first():
-            raise ValidationError('Deze e-mail bestaat al, log in als dat uw e-mail is.')
+            raise ValidationError(
+                'Deze e-mail bestaat al, log in als dat uw e-mail is.')
 
     def validate_phone(self, phone):
         for c in phone.data:
@@ -39,31 +49,43 @@ class RegistrationForm(FlaskForm):
 
 
 """ login form for login.html """
+
+
 class LoginForm(FlaskForm):
-    email = StringField('E-Mail', validators=[ DataRequired(), Email() ])
-    password = PasswordField('Wachtwoord', validators=[ DataRequired() ])
+    email = StringField('E-Mail', validators=[DataRequired(), Email()])
+    password = PasswordField('Wachtwoord', validators=[DataRequired()])
     remember = BooleanField('Herinneren')
     submit = SubmitField('Inloggen')
 
 
 """ update account form for account.html """
+
+
 class UpdateAccountForm(FlaskForm):
-    name = StringField('Naam', validators=[ DataRequired(), Length(min=2, max=20) ])
-    email = StringField('E-Mail', validators=[ DataRequired(), Email() ])
+    name = StringField('Naam', validators=[
+                       DataRequired(), Length(min=2, max=20)])
+    email = StringField('E-Mail', validators=[DataRequired(), Email()])
     password = PasswordField('Wachtwoord', validators=[])
-    confirm_password = PasswordField('Wachtwoord herhalen', validators=[ EqualTo('password') ])
-    picture = FileField('Profielfoto bewerken', validators=[ FileAllowed(['jpg', 'png']) ])
+    confirm_password = PasswordField(
+        'Wachtwoord herhalen', validators=[EqualTo('password')])
+    picture = FileField('Profielfoto bewerken', validators=[
+                        FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Bewerken')
 
     """ validates whether name is already in use """
+
     def validate_name(self, name):
         if name.data != current_user.name and User.query.filter_by(name=name.data).first():
-            raise ValidationError('Deze gebruikersnaam bestaat al, kies een andere.')
+            raise ValidationError(
+                'Deze gebruikersnaam bestaat al, kies een andere.')
 
     """ validates whether e-mail is already in use """
+
     def validate_email(self, email):
         if email.data != current_user.email and User.query.filter_by(email=email.data).first():
-            raise ValidationError('Deze e-mail bestaat al, log in als dat uw e-mail is')
+            raise ValidationError(
+                'Deze e-mail bestaat al, log in als dat uw e-mail is')
+
 
 class UpdateTrapForm(FlaskForm):
     mac = StringField('MAC')
@@ -71,19 +93,20 @@ class UpdateTrapForm(FlaskForm):
     location = StringField('Locatie')
     submit = SubmitField('Bewerken')
 
-class ConnectTrapForm(FlaskForm):
-    code = StringField('Koppel-Code', validators=[ Length(min=16, max=16) ])
-    submit = SubmitField('Verbinden')
-
-
-
 
 """ search form for admin.html """
+
+
 class SearchForm(FlaskForm):
-    username = StringField('Naam', validators=[ DataRequired(), Length(min=2, max=20)])
+    username = StringField('Naam', validators=[
+                           DataRequired(), Length(min=2, max=20)])
     submit = SubmitField('Zoeken')
 
+
 """ account-settings form for admin_user.html """
+
+
 class AdminForm(FlaskForm):
-    type = SelectField('Type',  choices=[('client', 'Klant'), ('admin', 'Administrator')])
+    type = SelectField('Type',  choices=[
+                       ('client', 'Klant'), ('admin', 'Administrator')])
     submit = SubmitField('Bewerken')

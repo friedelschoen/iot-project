@@ -52,11 +52,14 @@ void interface::beginRemote() {
 	if (remoteReady)	// already initalizised
 		return;
 
-	writeLED(COLOR_RED);
-	while (!usbSerial)
-		;
-	writeLED(COLOR_YELLOW);
+	if (!usbSerial)
+		return;
 
+	json req;
+	req["token"] = config.token;
+	remote("set_token", req, null_response, COMMAND_FORCE);
+
+	writeLED(COLOR_MAGENTA);
 	remoteReady = true;
 }
 
@@ -65,40 +68,33 @@ void interface::endRemote() {
 		return;
 
 	writeLED(COLOR_BLUE);
-
-	json response;
-	remote("hello", nullptr, response, COMMAND_FORCE);
-	const char* debug = response["debugToken"];
-	memcpy(debugToken, debug, sizeof(debugToken));
-
 	remoteReady = false;
 }
 
-int interface::send(interface::method method, const char* endpoint, json body, json& response) {
-	int code;
-
-	if (usbSerial || !modemReady) {
+int interface::send(interface::method method, const char* endpoint) {
+	if (usbSerial) {
 		beginRemote();
 
-		json request;
-
-		body["debugToken"] = debugToken;
-
-		request["method"]	= method_strings[method];
-		request["endpoint"] = endpoint;
-		request["body"]		= body;
+		json cmd_request;
+		cmd_request["method"]	= method_strings[method];
+		cmd_request["endpoint"] = endpoint;
+		cmd_request["body"]		= request;
 
 		json cmd_response;
-		if (remote("send", request, cmd_response))
+		if (remote("send", cmd_request, cmd_response))
 			return 0;
 
+		request	 = nullptr;
 		response = cmd_response["body"];
 		return cmd_response["code"];
 	} else {
 		endRemote();
+		if (!modemReady) {
+			return 0;
+		}
 		// modem
+		return 1;
 	}
-	return code;
 }
 
 interface::command_status interface::remote(const char* command, json params, json& response, command_flags flags) {
@@ -112,11 +108,17 @@ interface::command_status interface::remote(const char* command, json params, js
 	params.printTo(usbSerial);
 	usbSerial.print("\n");
 
-	String status = usbSerial.readStringUntil(' ');
+	String line = usbSerial.readStringUntil('\n');
+	String status;
+	if (line.indexOf(' ') != -1) {
+		status	 = line.substring(0, line.indexOf(' '));
+		response = json::parse(line.substring(line.indexOf(' ') + 1));
+	} else {
+		status = line;
+	}
 	if (!status.length()) {
 		return interface::STATUS_TIMEOUT;
 	} else if (status == "ok") {
-		response = json::parse(usbSerial.readStringUntil('\n'));
 		return interface::STATUS_OK;
 	} else {
 		response = status;

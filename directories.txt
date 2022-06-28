@@ -1,0 +1,5 @@
+/build - temporary build directory for Arduino IDE
+/client - arduino code for sara
+/dump - thing I don't want to delete but are unneeded
+/server - the main Flask server
+/ssl - https certificates

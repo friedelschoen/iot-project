@@ -1,6 +1,7 @@
 #include "include/config.h"
 #include "include/interface.h"
 #include "include/led.h"
+#include "include/macro.h"
 
 #include <Sodaq_LSM303AGR.h>
 #include <Sodaq_UBlox_GPS.h>
@@ -19,13 +20,28 @@ void setup() {
 	pinMode(BATVOLT_PIN, INPUT);
 	pinMode(CHARGER_STATUS, INPUT);
 
-	config_current = config_flash.read();
-
+	config.open();
 	client.begin();
 
-	json req;
-	//	req["mac"] = macAddress;
-	client.send(interface::METHOD_POST, "/api/hello", req);
+	if (!config.valid)
+		config = config_default;
+
+	client.request["token"]	 = config.token;
+	client.request["domain"] = config.domain;
+	while (!client.send(interface::METHOD_POST, "/api/hello")) {
+		writeLED(COLOR_RED);
+		delay(500);
+	}
+
+	bool save = false;
+	if (client.response.hasOwnProperty("token"))
+		strcpy(config.token, (const char*) client.response["token"]), save = true;
+	if (client.response.hasOwnProperty("domain"))
+		strcpy(config.domain, (const char*) client.response["domain"]), save = true;
+
+	if (save)
+		config.save();
+
 
 	Wire.begin();
 	delay(1000);
@@ -43,37 +59,37 @@ void loop() {
 	int		   now	= millis();
 
 	if (now - last > statusInterval * 1000) {
-		json gps;
 		if (sodaq_gps.scan(true, gpsTimeout * 1000)) {
-			gps["signal"]	 = true;
-			gps["latitude"]	 = sodaq_gps.getLat();
-			gps["longitude"] = sodaq_gps.getLon();
-			gps["accuracy"]	 = getAccuracy();	 // -> 100% the best, 0% the worst
+			client.request["latitude"]	= sodaq_gps.getLat();
+			client.request["longitude"] = sodaq_gps.getLon();
+			client.request["accuracy"]	= getAccuracy();
 		} else {
-			gps["signal"] = false;
+			client.request["latitude"]	= 0;
+			client.request["longitude"] = 0;
+			client.request["accuracy"]	= 0;
 		}
 
-		gps["satellites"] = sodaq_gps.getNumberOfSatellites();
+		client.request["token"]		  = config.token;
+		client.request["battery"]	  = batteryVoltage();
+		client.request["temperature"] = accel.getTemperature();
+		client.request["charging"]	  = getCharging();
+		client.request["trap"]		  = getTrapStatus();
+		client.request["satellites"]  = sodaq_gps.getNumberOfSatellites();
 
-		json req;
-		req["battery"]	   = batteryVoltage();
-		req["temperature"] = accel.getTemperature();
-		req["charging"]	   = getCharging();
-		req["trap"]		   = getTrapStatus();
-		req["gps"]		   = gps;
-
-		client.send(interface::METHOD_POST, "/api/update", req);
+		client.send(interface::METHOD_POST, "/api/update");
 		last = now;
 	}
 }
 
-double batteryVoltage() {
-	return batteryFactor * (double) analogRead(BATVOLT_PIN);
+int batteryVoltage() {
+	return batteryFactor * analogRead(BATVOLT_PIN);
 }
 
-double getAccuracy() {
+double getAccuracy() {	  // -> 100% the best, 0% the worst
 	double hdop = sodaq_gps.getHDOP();
-	return hdop > 1 ? 1.0 / hdop * 100 : hdop * 100;
+	if (hdop > 1)
+		hdop = 1.0 / hdop;
+	return hdop * 100;
 }
 
 bool getTrapStatus() {

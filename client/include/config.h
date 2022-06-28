@@ -25,7 +25,7 @@
 #define lineDebug		   false	 // print each line to debug
 #define blockDebug		   true		 // print if command is blocking
 #define blinkInterval	   0.25		 // seconds to wait for blink
-#define gpsTimeout		   5		 // seconds to gps-timeout
+#define gpsTimeout		   15		 // seconds to gps-timeout
 #define statusInterval	   5		 // send status every n seconds
 
 #define ADC_AREF	  3.3f
@@ -34,32 +34,18 @@
 #define BATVOLT_PIN	  BAT_VOLT
 #define batteryFactor (0.978 * (BATVOLT_R1 / BATVOLT_R2 + 1) / ADC_AREF)
 
-// -*- sim settings -*-
-//#define simPin		"0000"				   // PIN of the sim
-//#define simAPN		"lpwa.vodafone.iot"	   // APN-network of the sim
-//#define apiHostname "muizenval.tk"
-
-// -*- prefixes -*-
-#define prefixInfo	"info  | "
-#define prefixDebug "debug | "
-#define prefixError "error | "
-#define prefixLine	"line  | "
-#define prefixWarn	"warn  | "
-#define prefixEvent "event | "
-
 
 struct configuration {
 	bool valid;
 
-	char simPIN[4];
-	char simPUK[8];
-	char simAPN[50];
+	char token[17];
 	char domain[50];
 
-	char userToken[16];
+	void open();
+	void save();
 };
 
 extern FlashStorageClass<configuration> config_flash;
 
 extern configuration config_default;
-extern configuration config_current;
+extern configuration config;

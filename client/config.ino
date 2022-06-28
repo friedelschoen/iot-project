@@ -2,13 +2,18 @@
 
 FlashStorage(config_flash, configuration);
 
-configuration default_config{
-	/*.valid	   =*/true,
-	/*.simPIN	   =*/"",
-	/*.simPUK	   =*/"",
-	/*.simAPN	   =*/"",
-	/*.domain	   =*/"muizenval.tk",
-	/*.userToken =*/""
+configuration config_default{
+	true,	 // valid
+	"",		 // token
+	"",		 // domain,
 };
 
-configuration config_current;
+configuration config;
+
+void configuration::open() {
+	*this = config_flash.read();
+}
+
+void configuration::save() {
+	config_flash.write(*this);
+}

@@ -1,48 +1,26 @@
-
-body{
-  background: #eee;
-}
-
 #side_nav{
   background: #000;
-  width: 250px;
-  min-height: 1024px;
-}
-
-nav{
- margin-bottom: 10px;
-
-
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 20%;
+  position: fixed;
+  height: 100%;
 }
 
 .content{
-  min-height: 100vh;
-  width: 100%;
-}
-hr.h-color{
-  background:#eee
-
+  margin-left: 20%;
+  width:80%;
 }
 
-.col-7 {
-
-  padding-top: 15px;
-
-}
-.sidebar li.active{
-  background:#eee;
-  border-radius: 8px;
-
+.carousel .carousel-item {
+  max-height: 700px;
 }
 
-.sidebar li.active a, .sidebar li.active a:hover {
-color:#000
+.carousel-item img {
+  height: 50%;
+  width: 50%;
 }
-
-.sidebar li a{
-color:#fff;
-}
-
 
 .content-section {
   background: #ffffff;
@@ -52,8 +30,9 @@ color:#fff;
   margin-bottom: 20px;
 }
 
-
-
+#kutcss{
+  width: 50%;
+}
 .account-img {
   height: 125px;
   width: 125px;
@@ -71,17 +50,8 @@ color:#fff;
 
 #trap-map { 
   height: 300px; 
+  border: #aaa solid 1px;
 }
 
-@media(max-width: 767px){
-  #side_nav{
-     margin-left: -250px;
-     position: fixed;
-     min-height: 100vh;
-     z-index: 1;
-  }
-  #side_nav.active{
-     margin-left: 0;
-  }
- }
+
 
