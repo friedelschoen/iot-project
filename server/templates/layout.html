@@ -61,116 +61,64 @@
 </head>
 
 <body>
-    <nav class="navbar fixed-top bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <img src="/static/logo.svg" alt="" width="50%" height="50%">
-            </a>
-            <ul class="nav nav-pills">
-                {% if not current_user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ url_for('login') }}">Login</a>
-                </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('register') }}">Registeren</a>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ url_for('logout') }}">Logout</a>
-                </li>
+
+    <div class="main-container d-flex">
+        <div class="sidebar" id="side_nav">
+            <div class="header-box px-2 pt-3 pb-4">
+                <h1 class="fs-4"><span class="bg-white text-dark rounded shadow px-2 me-2">B</span> <span
+                        class="text-white">BENNI</span></h1>
+
+            </div>
+
+            <ul class="list-unstyled px-2">
+                <li class=""><a href="{{ url_for('index') }}" class="text-decoration-none px-3 py-2 d-block"><i
+                            class="far fa-map-marker-question"></i>Home</a></li>
+                <li class=""><a href="{{ url_for('about') }}" class="text-decoration-none px-3 py-2 d-block"><i
+                            class="far fa-map-marker-question"></i>Over ons</a></li>
+
+                {% if current_user.is_authenticated %}
+                <li class=""><a href="{{ url_for('traps') }}" class="text-decoration-none px-3 py-2 d-block"><i
+                            class="far fa-tachometer-alt"></i>Dashboard</a></li>
+                <li class=""><a href="#" class="text-decoration-none px-3 py-2 d-block"><i
+                            class="far fa-plug"></i>Koppel een val</a></li>
+                <li class=""><a href="{{ url_for('contact') }}" class="text-decoration-none px-3 py-2 d-block"><i
+                            class="far fa-address-book"></i>Contact opnemen</a></li>
                 {% endif %}
             </ul>
-        </div>
-    </nav>
+            <hr class="h-color mx-2">
 
-    <div class="container" style="padding-top:20px;">
-        <div class="row">
-            <!-- sidebar -->
-            <div class="col-3">
-                <ul class="nav nav-pills flex-column nav-justified">
-                    {% if current_user.is_authenticated %}
-                    <!--<li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('account') }}"><b>{{current_user.name}}</b></a>
-                    </li>-->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('traps') }}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Koppel een val</a>
-                    </li>
-                    {% if current_user.contact %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('contact') }}">Contact opnemen</a>
-                    </li>
-                    {% endif %}
-                    {% if current_user.admin %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin') }}">Gebruikers beheerden</a>
-                    </li>
-                    {% endif %}
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('about') }}">Over ons</a>
-                    </li>
-                    {% if current_user.is_authenticated %}
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown">
-                        <li class="nav-item">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" id="account-dropdown"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <b>{{current_user.name}}</b>
-                            </a>
+            <ul class="list-unstyled px-2">
+                {% if current_user.is_authenticated %}
+                <li class=""><a href="{{ url_for('account') }}" class="text-decoration-none px-3 py-2 d-block"><i
+                            class="far fa-cogs"></i>Instellingen</a></li>
+                <li class=""><a href="{{ url_for('logout') }}" class="text-decoration-none px-3 py-2 d-block"><i
+                            class="fas fa-sign-out"></i>Uitloggen</a></li>
+                {% else %}
+                <li class=""><a href="{{ url_for('login') }}" class="text-decoration-none px-3 py-2 d-block"><i
+                            class="fas fa-sign-out"></i>Inloggen</a></li>
+                <li class=""><a href="{{ url_for('register') }}" class="text-decoration-none px-3 py-2 d-block"><i
+                            class="fas fa-sign-out"></i>Registeren</a></li>
+                {% endif %}
+            </ul>
+            <hr class="h-color mx-2">
 
-                            <div class="dropdown-menu" aria-labelledby="account-dropdown">
-                                <a class="dropdown-item" href="{{ url_for('account') }}">Instellingen</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ url_for('logout') }}">Uitloggen</a>
-                            </div>
-                        </li>
-                    </div>
-                    {% endif %}
-                </ul>
-            </div>
-            <!--
-            <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
-                <li class="nav-item">
-                  <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages" aria-selected="false">Messages</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Settings</a>
-                </li>
-              </ul>
-              
-              <div class="tab-content">
-                <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">...1</div>
-                <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">..2.</div>
-                <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">.4..</div>
-                <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">.3..</div>
-              </div>
-            -->
-            <script>
-                $(function () {
-                    $('#myTab li:last-child a').tab('show')
-                })
-            </script>
-            <!-- content-->
-            <div class="col-7">
-                {% for category, message in get_flashed_messages(with_categories=true) %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-                {% block content %}{% endblock %}
-            </div>
         </div>
-    </div>
+        <!-- content-->
+        <div class="col-7">
+            {% for category, message in get_flashed_messages(with_categories=true) %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% block content %}{% endblock %}
+        </div>
+
+
+        <script> src = "https:://cdn.jsdelivr.net/npm/ootstrapp@5.0.2/dist/js/bootstrap.bundle.min.js"</script>
+        <script> src = "https://ajax/googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"</script>
+
+
 </body>
 
 </html>

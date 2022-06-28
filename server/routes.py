@@ -36,6 +36,14 @@ def about():
     return render_template('about.html', title='Over ons')
 
 
+""" home.html route """
+
+
+@app.route("/home")
+def home():
+    return render_template('home.html', title='Home')
+
+
 """ register.html route """
 
 
@@ -219,7 +227,7 @@ def trap_delete(trap_id):
 @app.route('/contact')
 @login_required
 def contact():
-    return render_template('contact.html')
+    return render_template('contact.html', contact=current_user.contact_class())
 
 
 """ admin.html route """

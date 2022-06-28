@@ -1,41 +1,48 @@
-body {
-  background: #fafafa;
-  color: #333333;
-  margin-top: 5rem;
 
-  font-family: 'Source Sans Pro';
+body{
+  background: #eee;
 }
 
-code {
-  font-family: 'Source Code Pro';
-  color: inherit;
+#side_nav{
+  background: #000;
+  width: 250px;
+  min-height: 1024px;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  color: #444444;
-}
+nav{
+ margin-bottom: 10px;
 
-nav {
 
 }
 
-nav code {
-  font-size: 16pt;
+.content{
+  min-height: 100vh;
+  width: 100%;
+}
+hr.h-color{
+  background:#eee
+
 }
 
-nav a {
-  color: rgb(0, 0, 0);
+.col-7 {
+
+  padding-top: 15px;
+
+}
+.sidebar li.active{
+  background:#eee;
+  border-radius: 8px;
+
 }
 
-nav a:hover {
-  color: rgb(0, 0, 0);
-  text-decoration: underline;
+.sidebar li.active a, .sidebar li.active a:hover {
+color:#000
 }
 
-/*nav a.active {
-  color: #fff;
-  font-weight: 600;
-}*/
+.sidebar li a{
+color:#fff;
+}
+
 
 .content-section {
   background: #ffffff;
@@ -45,41 +52,7 @@ nav a:hover {
   margin-bottom: 20px;
 }
 
-.article-title {
-  color: #444444;
-}
 
-a.article-title:hover {
-  color: #428bca;
-  text-decoration: none;
-}
-
-.article-content {
-  white-space: pre-line;
-}
-
-.article-img {
-  height: 65px;
-  width: 65px;
-  margin-right: 16px;
-}
-
-.article-metadata {
-  padding-bottom: 1px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid #e3e3e3
-}
-
-.article-metadata a:hover {
-  color: #333;
-  text-decoration: none;
-}
-
-.article-svg {
-  width: 25px;
-  height: 25px;
-  vertical-align: middle;
-}
 
 .account-img {
   height: 125px;
@@ -101,8 +74,15 @@ a.article-title:hover {
   border: #aaa solid 1px;
 }
 
-#sidebar {
-  min-width: 250px;
-  max-width: 250px;
-  min-height: 100vh;
-}
+@media(max-width: 767px){
+  #side_nav{
+     margin-left: -250px;
+     position: fixed;
+     min-height: 100vh;
+     z-index: 1;
+  }
+  #side_nav.active{
+     margin-left: 0;
+  }
+ }
+

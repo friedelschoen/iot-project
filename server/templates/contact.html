@@ -4,6 +4,7 @@
 <article class="media content-section">
 	<div class="media-body">
 		<h2>Uw contactgegevens</h2>
+		{% if contact %}
 		<p>
 			<b>{{ contact.name }}</b>
 		</p>
@@ -16,6 +17,7 @@
 		<p>
 			{{ contact.address.replace('\n', '<br>') | safe }}
 		</p>
+		{% endif %}
 	</div>
 </article>
 {% endwith %}
