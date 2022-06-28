@@ -24,16 +24,7 @@ def validate_mac(mac):
 
 @app.route("/")
 def index():
-    form = LoginForm()
-    return render_template('index.html', form=form)
-
-
-""" about.html route """
-
-
-@app.route("/about")
-def about():
-    return render_template('about.html', title='Over ons')
+    return render_template('index.html')
 
 
 """ home.html route """
