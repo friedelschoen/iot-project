@@ -20,6 +20,11 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
+ <!-- Bootstrap CSS-->
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+ <link rel="stylesheet" href="style.css" />
+ <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+
     <!-- Google Font: Source Sans Pro, Source Code Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,30 +68,31 @@
     <div class="main-container d-flex">
         <div class="sidebar" id="side_nav">
           <div class="header-box px-2 pt-3 pb-4">
-              <h1 class="fs-4"><span class="bg-white text-dark rounded shadow px-2 me-2">B</span> <span class="text-white">BENNI</span></h1>
+              <h1 class="fs-4"><span class="bg-white text-dark rounded shadow px-2 me-2"><img src="logo.png" alt="logo"></span> <span class="text-white">BENNI</span></h1>
               
           </div>
   
           <ul class="list-unstyled px-2">
+        <li class=""><a href="#" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-home"></i> Home</a></li>
         {% if current_user.is_authenticated %}
-          <li class=""><a href="{{ url_for('traps') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-tachometer-alt"></i>Dashboard</a></li>
-          <li class=""><a href="{{ url_for('trap_connect') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-plug"></i>Koppel een val</a></li>
-          <li class=""><a href="{{ url_for('contact') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-address-book"></i>Contact opnemen</a></li>
+          <li class=""><a href="{{ url_for('traps') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-tachometer-alt"></i> Dashboard</a></li>
+          <li class=""><a href="{{ url_for('trap_connect') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-plug"></i> Koppel een val</a></li>
+          <li class=""><a href="{{ url_for('contact') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-address-book"></i> Contact opnemen</a></li>
         {% endif %}
           
-        <li class=""><a href="#" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-map-marker-question"></i>Home</a></li>
-          <li class=""><a href="{{ url_for('about') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-map-marker-question"></i>Over ons</a></li>
+       
+          <li class=""><a href="{{ url_for('about') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-map-marker-question"></i> Over ons</a></li>
           
           </ul>
           <hr class="h-color mx-2">
   
           <ul class="list-unstyled px-2">
         {% if current_user.is_authenticated %}
-          <li class=""><a href="{{ url_for('account') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-cogs"></i>Instellingen</a></li>
-          <li class=""><a href="{{ url_for('logout') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-sign-out"></i>Uitloggen</a></li>
+          
+          <li class=""><a href="{{ url_for('logout') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-sign-out"></i> Uitloggen</a></li>
         {% else %}
         <li class=""><a href="{{ url_for('login') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-sign-out"></i>Inloggen</a></li>
-        <li class=""><a href="{{ url_for('register') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fas fa-sign-out"></i>Registeren</a></li>
+        <li class=""><a href="{{ url_for('register') }}" class="text-decoration-none px-3 py-2 d-block"><i class="far fa-user"></i> Registreren</a></li>
         {% endif %}
         </ul>
         <hr class="h-color mx-2">

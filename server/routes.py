@@ -83,7 +83,7 @@ def about():
 
 """ home.html route """
 @app.route("/home")
-def about():
+def home():
     return render_template('home.html', title='Home')
 
 """ register.html route """
