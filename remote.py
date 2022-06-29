@@ -15,7 +15,7 @@ import websockets
 
 WEBSOCKET_PORT = 1612
 
-client = HTTPConnection('localhost', 5000)
+client = HTTPConnection('muizenval.tk', 80)
 remote = Remote(115200)
 token: Optional[str] = None
 

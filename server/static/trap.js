@@ -65,7 +65,7 @@ function addTrap(trap) {
 			else if (trap.temperature < -10) (tempIcon = 'temperature-low'), (statusString += ', onderkoeld');
 			if (tempIcon) statusIcons += `<i class='fas fa-${tempIcon}'></i>`;
 
-			if (trap.locationSearch) (statusIcons += '<i class="fas fa-location"></i>'), (statusString += ', zoekt naar locatie');
+			if (trap.locationSearch) (statusIcons += '<i class="fas fa-satellite"></i>'), (statusString += ', zoekt naar locatie');
 		}
 
 		clone.querySelector('a.update').onclick = function () {
