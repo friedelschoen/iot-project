@@ -4,7 +4,7 @@
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Nog vandaag meedoen!</legend>
+            <legend class="border-bottom mb-4">Nu aanmelden!</legend>
             <div class="form-group">
                 {{ form.name.label(class="form-control-label") }}
 
@@ -130,7 +130,7 @@
     </form>
 </div>
 <div class="border-top pt-3">
-    <small class="text-muted">Heb jij al een account? <a class="ml-2"
+    <small class="text-muted">Heeft u al een account? <a class="ml-2"
             href="{{ url_for('login') }}">Inloggen!</a></small>
 </div>
 {% endblock content %}
