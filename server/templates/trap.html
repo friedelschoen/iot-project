@@ -7,57 +7,30 @@
             <div id="trap-map"></div>
         </div>
     </article>
-    {#}
-    {% for trap in traps %}
-    <article class="media content-section">
-        <div class="media-body">
-            <h3><a class="article-title" href="{{ url_for('trap_update', trap_id=trap.mac) }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="{{ trap.status_color() }}"
-                        class="bi bi-circle-fill" viewBox="0 0 20 20">
-                        <circle cx="10" cy="10" r="10" />
-                    </svg>
-                    -
-                    {% if trap.name %}
-                    {{ trap.name }}
-                    {% else %}
-                    <code>[{{ trap.pretty_mac() }}]</code>
-                    {% endif %}
-                </a>
-            </h3>
-            {% if trap.name %}
-            <p>
-                <code>[{{ trap.pretty_mac() }}]</code>
-            </p>
-            {% endif %}
-            {% if trap.owner %}
-            <b>
-                van {{ trap.owner_class().name }}
-            </b>
-            {% endif %}
-        </div>
-    </article>
-    {% endfor %}
-    {#}
 </div>
 <template id="trap-template">
     <article class="media content-section">
         <div class="media-body">
             <h3><a class="article-title link">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="bi bi-circle-fill"
-                        viewBox="0 0 20 20">
-                        <circle cx="10" cy="10" r="10" />
-                    </svg>
-                    -
+                    <span class="status-icons"></span>
+                    |
                     <span class="name"></span>
                 </a>
             </h3>
-            <b>
-                van <span class="owner"></span>
-            </b>
-            <p>Battery: <span class="battery"></span></p>
-            <p>Charging: <span class="charging"></span></p>
-            <p>Accuracy: <span class="accuracy"></span>% (<span class="satellites"></span> satellites)</p>
-            <p>Temperature: <span class="temperature"></span>&deg;C</p>
+            <p><i>
+                    van <b><span class="owner"></span></b></span>
+                </i></p>
+            <p><b><span class="status"></span></b></p>
+            <p><i class="fas fa-face-smile"></i> geregistreerd sinds <span class="owned-date"></p>
+            <p><i class="fas fa-wave-square"></i> laaste update om <span class="last-status"></span></p>
+            <p class="accuracy"><i class="fas fa-satellite"></i> nauwkeurigheid: <span class="accuracy"></span>%
+                met <span class="satellites"></span> satelliet(en)</p>
+            <p><i class="fas fa-temperature-half"></i> temperatuur: <span class="temperature"></span>&deg;C</p>
+            <p class="battery"><i class="fas fa-battery-half"></i> batterij: <span class="battery"></span>%</p>
+
+            <a class="btn btn-primary update" href="javascript:void(0)">bewerken</a>
+            <a class="btn btn-secondary location" href="javascript:void(0)"><span class="location-button"></span></a>
+            <a class="btn btn-danger delete" href="javascript:void(0)">verwijderen</a>
         </div>
     </article>
 </template>

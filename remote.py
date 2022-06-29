@@ -48,8 +48,6 @@ async def websocket_handler(ws, _):
     if await ws.recv() == 'token':
         if token:
             await ws.send(token)
-        else:
-            await ws.send(None)
     await ws.close()
 
 

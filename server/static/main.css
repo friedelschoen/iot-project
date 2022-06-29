@@ -53,5 +53,7 @@
   border: #aaa solid 1px;
 }
 
-
-
+i {
+  padding-left: 10px;
+  padding-right: 10px;
+}

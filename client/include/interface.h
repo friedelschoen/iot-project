@@ -45,6 +45,8 @@ struct interface {
 
 	int send(method method, const char* endpoint);
 
+	void sendToken();
+
 	command_status remote(const char* command, json params = nullptr, json& response = null_response, command_flags flags = COMMAND_NONE);
 
 	command_status modem(const char* request, char* response, command_flags flags = COMMAND_NONE);
