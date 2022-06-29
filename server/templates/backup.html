@@ -13,16 +13,13 @@
                 <h3>Welkom <b>{{ current_user.name if current_user.is_authenticated else 'gast' }}</b>!</h3>
                 {% if not current_user.is_authenticated %}
                 <p>
-                    Hallo! Jij bent nog niet ingelogd. Heb jij al een account moet jij bovenrechts op inloggen
-                    klikken.
+                    U bent nog niet ingelogd. Als u al een account heeft log dan in door rechtsboven op inloggen te klikken.
                 </p>
                 <p>
-                    Heb jij al onze producten gekocht maar jij hebt nog geen account? Je kan makkelijk een account
-                    registreren en je muizenvallen inschrijven!
+                    Heeft u al vallen gekocht, maar nog geen account aangemaakt? Registreer u dan nu en koppel uw muizenvallen in het dashboard.
                 </p>
                 <p>
-                    Jij bent nieuw en wilt ons producten kopen of testen? Ga naar ons shop om onze aanbiedingen in
-                    te kunnen zien.
+                    Bent u nieuw en wilt u onze producten kopen of testen? Neem een kijkje op onze website.
                 </p>
                 {% else %}
                 <p class='text-muted'>
