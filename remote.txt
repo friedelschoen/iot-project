@@ -1,7 +1,0 @@
-request:  <command:string> <parameters:json>
-response: <status:string> [parameters:json]
-
-status:
-- ok
-- not-ready
-- not-connected

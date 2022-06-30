@@ -1,7 +1,0 @@
-NONE    = off
-CYAN    = starting up
-
-BLUE     = idle modem
-MAGENTA  = idle remote
-YELLOW   = idle modem with warnings
-RED      = no interface

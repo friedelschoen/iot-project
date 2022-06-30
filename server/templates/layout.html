@@ -20,9 +20,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
-    <!-- Bootstrap CSS
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />-->
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
         integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -47,12 +45,6 @@
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
     <script type="text/javascript" charset="utf-8">
-        {% if user_token %}
-        var userToken = {{ user_token | tojson }};
-        {% else %}
-        var userToken = null;
-        {% endif %}
-
         $('.dropdown-toggle').dropdown()
 
         $(document).ready(function () {
@@ -81,11 +73,17 @@
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('traps') }}" class="text-decoration-none px-3 py-2 d-block text-white"><i
                             class="fas fa-chart-line"></i> Dashboard</a></li>
+                {% if current_user.admin %}
+                <li><a href="{{ url_for('admin') }}" class="text-decoration-none px-3 py-2 d-block text-white"><i
+                            class="fas fa-users"></i> Gebruikers</a></li>
+                {% else %}
                 <li><a href="{{ url_for('contact') }}" class="text-decoration-none px-3 py-2 d-block text-white"><i
-                            class="far fa-address-book"></i> Contact opnemen</a></li>
+                            class="fas fa-address-book"></i> Contact</a></li>
+
+                {% endif %}
                 {% endif %}
 
-                <li><a href="#" class="text-decoration-none px-3 py-2 d-block text-white"><i
+                <li><a href="{{ url_for('about') }}" class="text-decoration-none px-3 py-2 d-block text-white"><i
                             class="far fa-clipboard"></i> Over ons</a></li>
 
             </ul>
@@ -93,7 +91,9 @@
 
             <ul class="list-unstyled px-2">
                 {% if current_user.is_authenticated %}
-
+                <li class=""><a href="{{ url_for('account') }}"
+                        class="text-decoration-none px-3 py-2 d-block text-white"><i class="fas fa-wrench"></i>
+                        Instellingen</a></li>
                 <li class=""><a href="{{ url_for('logout') }}"
                         class="text-decoration-none px-3 py-2 d-block text-white"><i
                             class="fas fa-arrow-right-from-bracket"></i>

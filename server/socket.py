@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import random
+import sys
 from typing import Dict
 from flask import request, jsonify
 from flask_login import current_user
@@ -60,10 +61,11 @@ def update_status():
 
     if not trap.caught and req['trap']:
         if trap.owner:
-            stc = Statistic(user=trap.owner, date=datetime.now())
+            stc = Statistic(user=trap.owner, trap=trap.id, date=datetime.now())
             db.session.add(stc)
-        os.system(
-            f"echo \"<p>Uw muizenval '{trap.name}' heeft iets gevangen!<br>Ga naar <a href='http://muizenval.tk/traps'>uw dashboard</a>.</p><p>Groetjes Team Benni!</p>\" | mailx -a 'Content-Type: text/html' -s 'Muizenval is geactiveerd' {trap.owner_class().email}")        # type: ignore
+        if os.environ.get('SEND_MAIL', '0') != '0':
+            os.system(
+                f"echo \"<p>Uw muizenval '{trap.name}' heeft iets gevangen!<br>Ga naar <a href='http://muizenval.tk/traps'>uw dashboard</a>.</p><p>Groetjes Team Benni!</p>\" | mailx -a 'Content-Type: text/html' -s 'Muizenval is geactiveerd' {trap.owner_class().email}")        # type: ignore
         print('Email sent!')
 
     trap.last_status = datetime.now()
@@ -92,12 +94,15 @@ def update_status():
 def make_statistics(user: int):
     year = datetime.now().year
     months = [0] * 12
+    table = []
     stc: Statistic
     for stc in Statistic.query.filter_by(user=user):
+        table.append([stc.id, Trap.query.get(stc.trap).name,
+                     stc.date.strftime('%d-%m-%y %H:%M')])
         if stc.date.year == year:
             months[stc.date.month-1] += 1
 
-    return months
+    return dict(months=months, table=table)
 
 
 @socket.on('connect')
@@ -128,14 +133,13 @@ def socket_token(token):
         return
 
     trap: Trap = Trap.query.filter_by(token=token).first()
-    if not trap or trap.owner == current_user.id:
-        return
 
-    trap.owner = current_user.id
-    trap.owned_date = datetime.now()
-    db.session.commit()
+    if trap.owner != current_user.id:
+        trap.owner = current_user.id
+        trap.owned_date = datetime.now()
+        db.session.commit()
 
-    emit('trap-change', trap.to_json())
+        emit('trap-change', trap.to_json())
 
 
 @socket.on('location-search')
@@ -164,7 +168,11 @@ def socket_delete(data):
     if not trap or trap.owner != current_user.id:
         return
 
+    Statistic.query.filter_by(trap=trap.id).delete()
+
     trap.owner = False
+    trap.name = "n/a"
+
     db.session.commit()
 
 
@@ -173,7 +181,6 @@ def socket_name(data):
     if not data or not current_user.is_authenticated:
         return
 
-    print(data['id'])
     trap: Trap = Trap.query.get(data['id'])
     if not trap or trap.owner != current_user.id:
         return
@@ -182,3 +189,15 @@ def socket_name(data):
     db.session.commit()
 
     emit('trap-change', trap.to_json())
+
+
+@socket.on('delete-statistic')
+def socket_delete_statistic(id: int):
+    if not id or not current_user.is_authenticated:
+        return
+
+    Statistic.query.filter_by(id=id).delete()
+
+    db.session.commit()
+
+    emit('statistics', make_statistics(current_user.id))

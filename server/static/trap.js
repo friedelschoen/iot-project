@@ -19,9 +19,20 @@ trap {
 }
 */
 
-const errorDelay = 2500;
+var map = L.map('trap-map'),
+	socket = io();
 
-function addTrap(trap) {
+let token = null,
+	remote = false,
+	traps = {},
+	markers = [];
+
+map.setView([52.283333, 5.666667], 7);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+}).addTo(map);
+
+socket.on('trap-change', function (trap) {
 	var clone,
 		append = false;
 
@@ -50,11 +61,12 @@ function addTrap(trap) {
 		else if (trap.activated) (statusIcon = 'circle-exclamation'), (statusString += 'geactiveerd');
 		else (statusIcon = 'clock'), (statusString += 'wachtend');
 		statusIcons += `<i class='fas fa-${statusIcon}'></i>`;
+		//		clone.style.background = '#bdecb6';
 		clone.style.background = '#ffffff';
 
 		if (!trap.offline) {
 			if (trap.activated) {
-				clone.style.background = '#e8dcca';
+				clone.style.background = '#aec6cf';
 			}
 			if (trap.charging) (batteryIcon = 'plug-circle-bolt'), (statusString += ', aan het opladen');
 			else if (trap.battery == 0) batteryIcon = 'battery-empty';
@@ -136,52 +148,19 @@ function addTrap(trap) {
 		traps[trap.id].marker.remove();
 		traps[trap.id].marker = undefined;
 	}
-}
+});
 
-function removeTrap(trap) {
+socket.on('trap-remove', function (trap) {
 	if (traps[trap.id].marker) traps[trap.id].marker.remove();
 	traps[trap.id].element.remove();
 
 	delete traps[trap.id];
-}
+});
 
-function openWebSocket() {
-	let ws = new WebSocket('ws://localhost:1612/');
-	ws.addEventListener('open', () => ws.send('token'));
-	ws.addEventListener('message', (evt) => (token = evt.data));
-	ws.addEventListener('close', () => {
-		if (token) {
-			socket.emit('token', token);
-			remote = true;
-		}
-	});
-	ws.addEventListener('error', () => {
-		token = null;
-		remote = false;
-		setTimeout(openWebSocket, errorDelay);
-	});
-}
-
-var map = L.map('trap-map'),
-	socket = io();
-
-let token = null,
-	remote = false,
-	traps = {},
-	markers = [];
-
-map.setView([52.283333, 5.666667], 7);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-}).addTo(map);
-
-socket.on('trap-change', addTrap);
-socket.on('trap-remove', removeTrap);
-socket.on('statistics', function (months) {
+socket.on('statistics', function ({ table, months }) {
 	var chart = new CanvasJS.Chart('trap-chart', {
 		data: [
 			{
-				// Change type to "doughnut", "line", "splineArea", etc.
 				type: 'column',
 				dataPoints: [
 					{ label: 'Januari', y: months[0] },
@@ -201,6 +180,34 @@ socket.on('statistics', function (months) {
 		],
 	});
 	chart.render();
+	var tbl = document.getElementById('trap-table');
+	tbl.innerHTML =
+		'<tr><th>Muizenval</th><th>Datum</th><th></th></tr>' +
+		table.map(([id, name, date]) => `<tr><td>${name}</td><td>${date}</td><td><a href="javascript:deleteStc(${id})">verwijderen</a></td></tr>`).join('\n');
 });
 
-openWebSocket();
+function deleteStc(id) {
+	socket.emit('delete-statistic', id);
+}
+
+function websocket() {
+	let ws = new WebSocket('ws://localhost:1612/');
+	ws.addEventListener('open', () => ws.send('token'));
+	ws.addEventListener('message', (evt) => (token = evt.data));
+	ws.addEventListener('close', () => {
+		if (token) {
+			socket.emit('token', token);
+			remote = true;
+		} else {
+			remote = false;
+		}
+	});
+	ws.addEventListener('error', () => {
+		token = null;
+		remote = false;
+	});
+}
+
+setInterval(websocket, 10000);
+
+websocket();

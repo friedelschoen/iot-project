@@ -31,9 +31,9 @@
 #define commandTimeout	   10	  // seconds to cancel a command
 #define commandDelay	   0.1	  // delay after every command
 #define ignoreDelay		   2	  // seconds to wait if command is run with COMMAND_IGNORE
-#define gpsTimeout		   30	  // seconds to gps-timeout
-#define statusInterval	   60	  // send status every n seconds
-#define loopDelay		   10	  // seconds to wait each loop()
+#define gpsTimeout		   20	  // seconds to gps-timeout
+#define statusInterval	   10	  // send status every n seconds
+#define loopDelay		   5	  // seconds to wait each loop()
 
 // -*- battery stuff -*-
 #define adcAREF		  3.3

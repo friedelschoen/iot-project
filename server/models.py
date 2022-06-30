@@ -78,6 +78,7 @@ class Trap(db.Model):
 class Statistic(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
     user: int = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    trap: int = db.Column(db.Integer, db.ForeignKey('trap.id'), nullable=False)
     date: datetime = db.Column(db.DateTime, nullable=False)
 
 

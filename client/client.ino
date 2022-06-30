@@ -28,9 +28,12 @@ void setup() {
 	if (!config.valid)
 		config = config_default;
 
+	writeLED(COLOR_RED);
+	while (!usbSerial)
+		;
+
 	do {
-		writeLED(COLOR_RED);
-		delay(2500);
+		delay(1000);
 		client.request["token"]	 = config.token;
 		client.request["domain"] = config.domain;
 	} while (!client.send(interface::METHOD_POST, "/api/hello"));

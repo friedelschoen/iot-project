@@ -5,8 +5,8 @@ from server.models import User
 TOKEN_CHARS = '0123456789abcdefghijklmnopqrstuvwxyz'
 
 users = [
-    (1, False, 'Boer Herman', 'boer@muizenval.tk', 2),
-    (2, True, 'Administrator Ralf', 'admin@muizenval.tk', None),
+    #    (1, False, 'Boer Herman', 'boer@muizenval.tk', 2),
+    #   (2, True, 'Administrator Ralf', 'admin@muizenval.tk', None),
 ]
 
 address = 'Kerklaan 69\n9876XY Groningen'

@@ -52,8 +52,7 @@ void interface::beginRemote() {
 	if (remoteReady)	// already initalizised
 		return;
 
-	if (!usbSerial)
-		return;
+	delay(2500);
 
 	sendToken();
 

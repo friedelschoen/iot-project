@@ -1,6 +1,6 @@
 body {
   background-color: #efefef;
-  font-size:25px;
+  font-size:20px;
 }
 
 #side_nav{
@@ -16,10 +16,6 @@ body {
 .content{
   margin-left: 20%;
   width:80%;
-}
-
-.carousel .carousel-item {
-
 }
 
 .carousel-item img {
@@ -39,10 +35,11 @@ body {
   margin-bottom: 20px;
 }
 
-#kutcss{
+.picture-css{
   width: 50%;
   padding: 10px;
 }
+
 .account-img {
   height: 125px;
   width: 125px;

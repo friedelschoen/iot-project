@@ -12,23 +12,19 @@ import os
 current_user: User
 
 
-""" index.html (home-page) route """
-
-
+# index.html (home-page) route
 @app.route("/")
 def index():
     return render_template('index.html')
 
-
-""" home.html route """
-
-
-@app.route("/home")
-def home():
-    return render_template('home.html', title='Home')
+# about.html route
 
 
-""" register.html route """
+@app.route("/about")
+def about():
+    return render_template('about.html')
+
+# register.html route
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -56,14 +52,7 @@ def register():
     return render_template('register.html', title='Registeren', form=form)
 
 
-@app.route("/producten")
-def producten():
-    return render_template('producten.html')
-
-
-""" login.html route """
-
-
+# login.html route
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -84,18 +73,14 @@ def login():
     return render_template('login.html', title='Inloggen', form=form)
 
 
-""" logout route """
-
-
+# logout route
 @app.route("/logout")
 def logout():
     logout_user()
     return redirect('/')
 
 
-""" save-picture function for account.html """
-
-
+# save-picture function for account.html
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
