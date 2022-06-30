@@ -58,7 +58,7 @@ def register():
         )
         db.session.add(user)
         db.session.commit()
-        flash('Uw profiel werd toegevoegd! U kan nu inloggen.', 'success')
+        flash('Uw profiel is toegevoegd! U kunt nu inloggen.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', title='Registeren', form=form)
 
@@ -83,11 +83,11 @@ def login():
             login_user(user, remember=form.remember.data)
             if bcrypt.check_password_hash(user.password, form.email.data):
                 flash(
-                    'Wij zullen aanbevelen uw wachtwoord weer te veranderen', 'warning')
+                    'Wij raden u aan om uw wachtwoord te veranderen', 'warning')
             next_page = request.args.get('next')
             return redirect(next_page if next_page else '/')
         else:
-            flash('Kon niet inloggen, is uw e-mail en wachtwoord juist?', 'danger')
+            flash('Inloggen mislukt, is uw e-mail en/of wachtwoord juist?', 'danger')
     return render_template('login.html', title='Inloggen', form=form)
 
 
@@ -277,7 +277,7 @@ def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()
-    flash(f'De gebruiker {user.username} werd verwijdert', 'success')
+    flash(f'De gebruiker {user.username} is verwijderd', 'success')
     return redirect(url_for('admin'))
 
 
@@ -302,5 +302,5 @@ def reset_user(user_id):
 
 @app.errorhandler(404)
 def not_found(error):
-    flash(f"Deze pagina werd niet gevonden", 'danger')
+    flash(f"De pagina is niet gevonden", 'danger')
     return index()  # geen redirect om de '/bla' te houden
