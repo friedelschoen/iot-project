@@ -1,3 +1,7 @@
+body {
+  background-color: #efefef;
+}
+
 #side_nav{
   background: #000;
   list-style-type: none;
@@ -51,6 +55,11 @@
 #trap-map { 
   height: 300px; 
   border: #aaa solid 1px;
+}
+
+#trap-chart {
+  height: 300px; 
+  position: relative;
 }
 
 i {

@@ -50,8 +50,12 @@ function addTrap(trap) {
 		else if (trap.activated) (statusIcon = 'circle-exclamation'), (statusString += 'geactiveerd');
 		else (statusIcon = 'clock'), (statusString += 'wachtend');
 		statusIcons += `<i class='fas fa-${statusIcon}'></i>`;
+		clone.style.background = '#ffffff';
 
 		if (!trap.offline) {
+			if (trap.activated) {
+				clone.style.background = '#e8dcca';
+			}
 			if (trap.charging) (batteryIcon = 'plug-circle-bolt'), (statusString += ', aan het opladen');
 			else if (trap.battery == 0) batteryIcon = 'battery-empty';
 			else if (trap.battery < 30) batteryIcon = 'battery-quarter';
@@ -65,7 +69,9 @@ function addTrap(trap) {
 			else if (trap.temperature < -10) (tempIcon = 'temperature-low'), (statusString += ', onderkoeld');
 			if (tempIcon) statusIcons += `<i class='fas fa-${tempIcon}'></i>`;
 
-			if (trap.locationSearch) (statusIcons += '<i class="fas fa-satellite"></i>'), (statusString += ', zoekt naar locatie');
+			if (trap.locationSearching) (statusIcons += '<i class="fas fa-satellite"></i>'), (statusString += ', zoekt naar locatie');
+		} else {
+			clone.style.background = '#eeeeee';
 		}
 
 		clone.querySelector('a.update').onclick = function () {
@@ -171,5 +177,30 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 socket.on('trap-change', addTrap);
 socket.on('trap-remove', removeTrap);
+socket.on('statistics', function (months) {
+	var chart = new CanvasJS.Chart('trap-chart', {
+		data: [
+			{
+				// Change type to "doughnut", "line", "splineArea", etc.
+				type: 'column',
+				dataPoints: [
+					{ label: 'Januari', y: months[0] },
+					{ label: 'Februari', y: months[1] },
+					{ label: 'Maart', y: months[2] },
+					{ label: 'April', y: months[3] },
+					{ label: 'Mei', y: months[4] },
+					{ label: 'Juni', y: months[5] },
+					{ label: 'Juli', y: months[6] },
+					{ label: 'Augustus', y: months[7] },
+					{ label: 'September', y: months[8] },
+					{ label: 'October', y: months[9] },
+					{ label: 'November', y: months[10] },
+					{ label: 'December', y: months[11] },
+				],
+			},
+		],
+	});
+	chart.render();
+});
 
 openWebSocket();

@@ -14,8 +14,8 @@ import websockets
 
 
 WEBSOCKET_PORT = 1612
+host, port = 'localhost', 5000
 
-client = HTTPConnection('muizenval.tk', 80)
 remote = Remote(115200)
 token: Optional[str] = None
 
@@ -32,6 +32,7 @@ def send_http(params):
 
     print(body)
 
+    client = HTTPConnection(host, port)
     client.request(method, endpoint, json.dumps(body))
     res = client.getresponse()
     response = json.load(res)

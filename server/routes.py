@@ -145,53 +145,6 @@ def traps():
     return render_template('trap.html')
 
 
-"""
-@app.route('/trap/<int:trap_id>/update', methods=['POST', 'GET'])
-@login_required
-def trap_update(trap_id: int):
-    form = UpdateTrapForm()
-    trap = Trap.query.get(trap_id)
-    if not trap or trap.owner != current_user.id:
-        flash('Val is niet van u', 'error')
-        return redirect(url_for('traps'))
-    if form.validate_on_submit():
-        trap.name = form.name.data
-        db.session.commit()
-        return redirect(url_for('traps'))
-    elif not trap:
-        flash('Muizenval niet gevonden', 'danger')
-        return redirect(url_for('traps'))
-    elif request.method == 'GET':
-        form.name.data = trap.name
-    return render_template('updatetrap.html', form=form, trap=trap)
-
-
-@app.route('/trap/<int:trap_id>/delete')
-@login_required
-def trap_delete(trap_id: int):
-    trap: Trap = Trap.query.get(trap_id)
-    if not trap or trap.owner != current_user.id:
-        flash('Val is niet van u', 'error')
-    else:
-        trap.owner = None
-        db.session.commit()
-
-    return redirect(url_for('traps'))
-
-
-@app.route('/trap/<int:trap_id>/location/<int:search>')
-@login_required
-def trap_location_search(trap_id: int, search: int):
-    trap: Trap = Trap.query.get(trap_id)
-    if not trap or trap.owner != current_user.id:
-        flash('Val is niet van u', 'error')
-    else:
-        trap.location_search = bool(search)
-        db.session.commit()
-    return redirect(url_for('traps'))
-"""
-
-
 @app.route('/contact')
 @login_required
 def contact():

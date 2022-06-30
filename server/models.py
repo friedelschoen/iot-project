@@ -37,6 +37,8 @@ class Trap(db.Model):
     charging: bool = db.Column(db.Boolean, nullable=False, default=False)
     temperature: int = db.Column(db.Integer, nullable=False, default=0)
     location_search: bool = db.Column(db.Boolean, nullable=False, default=True)
+    location_searching: bool = db.Column(
+        db.Boolean, nullable=False, default=True)
     location_acc: float = db.Column(db.Float, nullable=False, default=0)
     location_lat: Optional[float] = db.Column(db.Float)
     location_lon: Optional[float] = db.Column(db.Float)
@@ -57,6 +59,7 @@ class Trap(db.Model):
             name=self.name,
             offline=self.offline(),
             locationSearch=self.location_search,
+            locationSearching=self.location_searching,
             latitude=self.location_lat,
             longitude=self.location_lon,
             accuracy=round(self.location_acc, 1),
@@ -70,6 +73,12 @@ class Trap(db.Model):
             ownedDate=self.owned_date.strftime(
                 '%d-%m-%y %H:%M') if self.owned_date else '-'
         )
+
+
+class Statistic(db.Model):
+    id: int = db.Column(db.Integer, primary_key=True)
+    user: int = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date: datetime = db.Column(db.DateTime, nullable=False)
 
 
 @login_manager.user_loader

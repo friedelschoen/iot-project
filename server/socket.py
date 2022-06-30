@@ -7,7 +7,7 @@ from flask_login import current_user
 from flask_socketio import emit
 
 from .app import app, db, socket, domain
-from .models import Trap, User
+from .models import Statistic, Trap, User
 
 current_user: User
 
@@ -37,6 +37,10 @@ def register_trap():
         db.session.add(trap)
         db.session.commit()
         res['token'] = token
+    else:
+        trap: Trap = Trap.query.filter_by(token=req['token']).first()
+
+    res['location_search'] = trap.location_search
 
     if 'domain' not in req or req['domain'] != domain:
         res['domain'] = domain
@@ -55,6 +59,9 @@ def update_status():
         return jsonify(dict(error='invalid-token'))
 
     if not trap.caught and req['trap']:
+        if trap.owner:
+            stc = Statistic(user=trap.owner, date=datetime.now())
+            db.session.add(stc)
         # os.system(
         #   f"echo -e -s \"Je muizenval '{trap.name}' heeft iets gevangen!\\n\\nGroetjes uw Team Benni!\" | mailx -s 'Muizenval werd geactiveerd' {trap.owner_class().email}")        # type: ignore
         print('Email sent!')
@@ -64,6 +71,7 @@ def update_status():
     trap.battery = req['battery']
     trap.temperature = req['temperature']
     trap.charging = req['charging']
+    trap.location_searching = req['searching']
     if trap.location_search:
         trap.location_satellites = req['satellites']
         if req['accuracy'] != 0:
@@ -75,8 +83,21 @@ def update_status():
 
     if trap.owner and trap.owner in sockets:
         socket.emit('trap-change', trap.to_json(), to=sockets[trap.owner])
+        socket.emit('statistics', make_statistics(
+            trap.owner), to=sockets[trap.owner])
 
     return jsonify(dict(location_search=trap.location_search))
+
+
+def make_statistics(user: int):
+    year = datetime.now().year
+    months = [0] * 12
+    stc: Statistic
+    for stc in Statistic.query.filter_by(user=user):
+        if stc.date.year == year:
+            months[stc.date.month-1] += 1
+
+    return months
 
 
 @socket.on('connect')
@@ -88,6 +109,8 @@ def socket_connect():
 
     for trap in Trap.query.filter_by(owner=current_user.id):
         emit('trap-change', trap.to_json())
+
+    emit('statistics', make_statistics(current_user.id))
 
 
 @socket.on('disconnect')

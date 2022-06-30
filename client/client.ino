@@ -7,10 +7,12 @@
 #include <Sodaq_UBlox_GPS.h>
 #include <Wire.h>
 
-interface		client;
-Sodaq_LSM303AGR accel;
+static interface	   client;
+static Sodaq_LSM303AGR accel;
+static bool			   next_scan, scan;
 
 void (*reset)() = 0;
+
 
 void setup() {
 	pinMode(ledRed, OUTPUT);
@@ -33,6 +35,8 @@ void setup() {
 		client.request["domain"] = config.domain;
 	} while (!client.send(interface::METHOD_POST, "/api/hello"));
 	writeLED(COLOR_WHITE);
+
+	next_scan = scan = (bool) client.request["location_search"];
 
 	bool save = false;
 	if (client.response.hasOwnProperty("token")) {
@@ -57,9 +61,8 @@ void setup() {
 }
 
 void loop() {
-	static int	last	  = 0;
-	static bool next_scan = true, scan = true;
-	int			now = millis();
+	static int last = 0;
+	int		   now	= millis();
 
 	if (now - last > statusInterval * 1000) {
 		if (scan && sodaq_gps.scan(next_scan, gpsTimeout * 1000)) {
@@ -79,6 +82,7 @@ void loop() {
 		client.request["charging"]	  = getCharging();
 		client.request["trap"]		  = getTrapStatus();
 		client.request["satellites"]  = sodaq_gps.getNumberOfSatellites();
+		client.request["searching"]	  = scan;
 
 		if (client.send(interface::METHOD_POST, "/api/update")) {
 			next_scan = (bool) client.response["location_search"];
