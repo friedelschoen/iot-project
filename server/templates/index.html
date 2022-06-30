@@ -4,10 +4,16 @@
   <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
     <div class="carousel-inner">
       <div class="carousel-item active">
-        <img class="d-block w-100" src="{{url_for('static', filename='product_pics/Benni.jpg')}}" alt="First slide">
+        <img class="d-block w-100" src="{{url_for('static', filename='product_pics/3.jpeg')}}" alt="First slide">
       </div>
       <div class="carousel-item">
-        <img class="d-block w-100" src="{{url_for('static', filename='product_pics/Dashboard.jpg')}}" alt="Second slide">
+        <img class="d-block w-100" src="{{url_for('static', filename='product_pics/1.jpeg')}}" alt="Second slide">
+      </div>
+      <div class="carousel-item">
+        <img class="d-block w-100" src="{{url_for('static', filename='product_pics/2.jpeg')}}" alt="Second slide">
+      </div>
+      <div class="carousel-item">
+        <img class="d-block w-100" src="{{url_for('static', filename='product_pics/4.jpeg')}}" alt="Second slide">
       </div>
     </div>
     <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -23,20 +29,24 @@
 <div class="d-flex flex-column">
    <div class="p-2">
     <article>
-      Benni is de grote hulp voor Groninger boeren om inzicht te krijgen in het ongedierte op hun erf. Een netwerk van slimme vallen verdeeld over het erf geven aan een online dashboard door als er iets gevangen is. Benni verstuurt via 5G een melding naar de boer met de naam van de val en waar de val staat.
+      Benni is dé grote hulp voor Groninger boeren om inzicht te krijgen in het ongedierte op hun erf. Alle door een netwerk van slimme vallen verzamelde data worden weergegeven op het persoonlijke dashboard. Benni verstuurt via 5G een mail als er iets gevangen is.
     </article>
   </div>
   <div class="p-2">
     <div class="d-flex flex-row">
-      <div class="p-2" id="kutcss">Flex item 1</div>
       <div class="p-2" id="kutcss">
-        Functionaliteiten:</br>
+        <img class="flex-img" src="{{url_for('static', filename='product_pics/dash1.jpg')}}" alt="somethign">
+      </div>
+      <div class="p-2" id="kutcss">
+        <h6>Functionaliteiten</h6></br>
       </br>
         GPS</br>
+        5G</br>
         Werkt op batterij</br>
         Dashboard met actuele informatie</br>
         Statistieken</br>
-        U krijgt een mailtje als er iets gevangen is</br>
+        Logboek</br>
+        Melding als er een val is afgegaan</br>
         Goedkoop</br>
         Energiezuinig</br>
 
@@ -46,15 +56,40 @@
   <div class="p-2">
     <div class="d-flex flex-row">
       <div class="p-2" id="kutcss">
-        Er zijn twee mogelijkheden:</br>
+        <h6>Kopen of huren?</h6></br>
       </br>
-        - U huurt de vallen, waarbij uw vallen in bruikleen heeft en service krijgt. Hiervoor betaalt u maandelijks een vast bedrag van €20,- waar voor elke val €1,- wordt bijgeteld.</br>
+        - Huren: hiervoor betaalt u maandelijks een vast bedrag van €20,- plus €1,- per val. U heeft de vallen in bruikleen en ontvangt extra service, zoals technische ondersteuning. </br>
       </br>
-        - U koopt vallen. Een val kost €17,50 per stuk.   
+        - Kopen: een val kost €17,50 per stuk.
       </div>
-      <div class="p-2" id="kutcss">Flex item 2</div>
+      <div class="p-2" id="kutcss">
+        <img class="flex-img" src="{{url_for('static', filename='product_pics/dash2.jpg')}}" alt="somethign">
+      </div>
     </div>
   </div>
-</div> 
+  <div class="p-2">
+    <div class="d-flex flex-row">
+      <div class="p-2" id="kutcss">
+        <h6>Beveiliging</h6></br>
+      </br>
+       - Hashing</br>
+       - communicatie vanuit server</br>
+       - verschillende lagen (rechten)</br>
+      </div>
+    </div>
+  </div>
+  <div class="p-2">
+    <div class="d-flex flex-row">
+      <div class="p-2" id="kutcss">
+        <h6>Foutpreventie</h6></br>    
+      </br>
+        - Melding als de gemeten temperatuur hoger dan 50 graden is of onder de -10 graden</br>
+        - Dashboard geeft aan of er problemen zijn met de batterij</br>
+        - Val is te koppelen via USB</br>
+        - Boardje en batterij waterdicht en stofvrij opgeborgen</br>
+        - Sensor bestand tegen stof en water</br>
+    </div>
+  </div>
+</div>      
 
 {% endblock content %}
