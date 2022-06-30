@@ -1,5 +1,6 @@
-from datetime import datetime
-from typing import Any, Dict, Optional
+from datetime import datetime, timedelta
+from email.policy import default
+from typing import Optional
 from flask_login import UserMixin
 
 from .app import db, login_manager
@@ -27,49 +28,57 @@ class Trap(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
     token: str = db.Column(db.String(16), unique=True, nullable=False)
     owner: Optional[int] = db.Column(db.Integer, db.ForeignKey('user.id'))
-    name: Optional[str] = db.Column(db.Text)
+    owned_date: Optional[datetime] = db.Column(db.DateTime)
+    name: str = db.Column(db.Text, nullable=False, default='n/a')
 
-    last_status: Optional[datetime] = db.Column(db.DateTime)
-    caught: Optional[bool] = db.Column(db.Boolean)
-    battery: Optional[int] = db.Column(db.Integer)
-    charging: Optional[bool] = db.Column(db.Boolean)
-    temperature: Optional[int] = db.Column(db.Integer)
+    last_status: datetime = db.Column(db.DateTime, nullable=False)
+    caught: bool = db.Column(db.Boolean, nullable=False, default=False)
+    battery: int = db.Column(db.Integer, nullable=False, default=0)
+    charging: bool = db.Column(db.Boolean, nullable=False, default=False)
+    temperature: int = db.Column(db.Integer, nullable=False, default=0)
+    location_search: bool = db.Column(db.Boolean, nullable=False, default=True)
+    location_searching: bool = db.Column(
+        db.Boolean, nullable=False, default=True)
+    location_acc: float = db.Column(db.Float, nullable=False, default=0)
     location_lat: Optional[float] = db.Column(db.Float)
     location_lon: Optional[float] = db.Column(db.Float)
-    location_acc: Optional[float] = db.Column(db.Float)
     location_satellites: Optional[int] = db.Column(db.Integer)
 
     def owner_class(self) -> Optional[User]:
         return User.query.get(self.owner)
 
-    def status_color(self) -> str:
-        if self.caught:
-            return '#f4a900'
-        return 'currentColor'
+    def offline(self):
+        return datetime.now() - self.last_status > timedelta(hours=1)
 
-    def dict(self) -> Dict[str, Any]:
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-    def to_json(self, token: bool = False):
+    def to_json(self):
         owner = self.owner_class()
-        owner_name = owner.name if owner else '{nobody}'
+        owner_name = owner.name if owner else 'n/a'
 
         return dict(
             id=self.id,
-            name=self.name or '<code>unnamed</code>',
-            status=self.status_color(),
-            location=self.location_acc and self.location_acc > 0,
+            name=self.name,
+            offline=self.offline(),
+            locationSearch=self.location_search,
+            locationSearching=self.location_searching,
             latitude=self.location_lat,
             longitude=self.location_lon,
-            accuracy=self.location_acc,
+            accuracy=round(self.location_acc, 1),
             satellites=self.location_satellites,
             activated=self.caught,
             owner=owner_name,
             battery=self.battery,
             charging=self.charging,
             temperature=self.temperature,
-            byToken=token
+            lastStatus=self.last_status.strftime('%d-%m-%y %H:%M'),
+            ownedDate=self.owned_date.strftime(
+                '%d-%m-%y %H:%M') if self.owned_date else '-'
         )
+
+
+class Statistic(db.Model):
+    id: int = db.Column(db.Integer, primary_key=True)
+    user: int = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date: datetime = db.Column(db.DateTime, nullable=False)
 
 
 @login_manager.user_loader

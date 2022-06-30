@@ -1,6 +1,7 @@
+#include "include/config.h"
 #include "include/led.h"
 
-static const bool colors[][3] = {
+static bool colors[][3] = {
 	[COLOR_NONE]	= { 0, 0, 0 },
 	[COLOR_RED]		= { 1, 0, 0 },
 	[COLOR_GREEN]	= { 0, 1, 0 },
@@ -12,7 +13,7 @@ static const bool colors[][3] = {
 };
 
 void writeLED(color c) {
-	digitalWrite(LED_RED, !colors[c][0]);
-	digitalWrite(LED_GREEN, !colors[c][1]);
-	digitalWrite(LED_BLUE, !colors[c][2]);
+	digitalWrite(ledRed, !colors[c][0]);
+	digitalWrite(ledGreen, !colors[c][1]);
+	digitalWrite(ledBlue, !colors[c][2]);
 }

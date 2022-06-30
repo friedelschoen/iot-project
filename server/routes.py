@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from PIL import Image
@@ -9,14 +8,8 @@ from .models import Trap, User
 
 import secrets
 import os
-import random
-import string
 
 current_user: User
-
-
-def validate_mac(mac):
-    return len(mac) == 16 and all(c in string.hexdigits for c in mac)
 
 
 """ index.html (home-page) route """
@@ -149,70 +142,7 @@ def account():
 @app.route('/traps')
 @login_required
 def traps():
-    if current_user.admin:
-        #        clean_traps()
-        query = Trap.query.all()
-    else:
-        query = Trap.query.filter_by(owner=current_user.id)
-
-    trap_json = [trap.dict() for trap in query]
-
-    return render_template('trap.html', traps=query, trap_json=trap_json)
-
-
-"""
-@app.route('/traps/connect', methods=['POST', 'GET'])
-@login_required
-def trap_connect():
-    form = ConnectTrapForm()
-    if form.validate_on_submit() and form.code.data:
-        trap = Trap.query.filter_by(mac=form.code.data.replace(':', '').replace(
-            ' ', '').lower()).filter(Trap.connect_expired > datetime.utcnow()).first()
-        if not trap:
-            flash('Muizenval niet gevonden', 'danger')
-            return redirect(url_for('trap_connect'))
-
-        trap.owner = current_user.id
-        trap.connect_expired = None
-        trap.connect_code = None
-        db.session.commit()
-        flash('Muizenval toegevoegd!', 'success')
-        return redirect(url_for('traps'))
-
-    return render_template('connect.html', form=form)
-"""
-
-
-@app.route('/trap/<trap_id>/update', methods=['POST', 'GET'])
-@login_required
-def trap_update(trap_id):
-    form = UpdateTrapForm()
-    trap = Trap.query.filter_by(mac=trap_id).first()
-    if form.validate_on_submit():
-        trap.name = form.name.data
-        print(form.location.data)
-        if form.location.data:
-            trap.location_lat, trap.location_lon = form.location.data.split(
-                ' ', 2)
-        db.session.commit()
-        return redirect(url_for('traps'))
-    elif not trap:
-        flash('Muizenval niet gevonden', 'danger')
-        return redirect(url_for('traps'))
-    elif request.method == 'GET':
-        form.mac.data = trap.pretty_mac()
-        form.name.data = trap.name
-    return render_template('updatetrap.html', form=form, trap=trap)
-
-
-@app.route('/trap/<trap_id>/delete')
-@login_required
-def trap_delete(trap_id):
-    trap = Trap.query.filter_by(mac=trap_id.lower()).first()
-    db.session.delete(trap)
-    db.session.commit()
-
-    return redirect(url_for('traps'))
+    return render_template('trap.html')
 
 
 @app.route('/contact')

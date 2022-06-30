@@ -14,8 +14,8 @@ import websockets
 
 
 WEBSOCKET_PORT = 1612
+host, port = 'localhost', 5000
 
-client = HTTPConnection('localhost', 5000)
 remote = Remote(115200)
 token: Optional[str] = None
 
@@ -32,6 +32,7 @@ def send_http(params):
 
     print(body)
 
+    client = HTTPConnection(host, port)
     client.request(method, endpoint, json.dumps(body))
     res = client.getresponse()
     response = json.load(res)
@@ -48,8 +49,6 @@ async def websocket_handler(ws, _):
     if await ws.recv() == 'token':
         if token:
             await ws.send(token)
-        else:
-            await ws.send(None)
     await ws.close()
 
 

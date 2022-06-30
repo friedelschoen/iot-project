@@ -1,16 +1,19 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+import os
 import random
 from typing import Dict
 from flask import request, jsonify
 from flask_login import current_user
-from flask_socketio import emit, Namespace
+from flask_socketio import emit
 
 from .app import app, db, socket, domain
-from .models import Trap, User
+from .models import Statistic, Trap, User
 
 current_user: User
 
-sockets: Dict[int, Namespace] = {}
+sockets: Dict[int, str] = {}
+
+accuracy_min = 80
 
 
 def make_token():
@@ -29,10 +32,15 @@ def register_trap():
             token = make_token()
             if not Trap.query.filter_by(token=token).first():
                 break
-        trap = Trap(token=token)
+
+        trap = Trap(token=token, last_status=datetime.now())
         db.session.add(trap)
         db.session.commit()
         res['token'] = token
+    else:
+        trap: Trap = Trap.query.filter_by(token=req['token']).first()
+
+    res['location_search'] = trap.location_search
 
     if 'domain' not in req or req['domain'] != domain:
         res['domain'] = domain
@@ -50,52 +58,46 @@ def update_status():
     if not trap:
         return jsonify(dict(error='invalid-token'))
 
+    if not trap.caught and req['trap']:
+        if trap.owner:
+            stc = Statistic(user=trap.owner, date=datetime.now())
+            db.session.add(stc)
+        # os.system(
+        #   f"echo -e -s \"Je muizenval '{trap.name}' heeft iets gevangen!\\n\\nGroetjes uw Team Benni!\" | mailx -s 'Muizenval werd geactiveerd' {trap.owner_class().email}")        # type: ignore
+        print('Email sent!')
+
+    trap.last_status = datetime.now()
     trap.caught = req['trap']
     trap.battery = req['battery']
     trap.temperature = req['temperature']
     trap.charging = req['charging']
-    trap.location_lat = req['latitude']
-    trap.location_lon = req['longitude']
-    trap.location_acc = req['accuracy']
-    trap.location_satellites = req['satellites']
+    trap.location_searching = req['searching']
+    if trap.location_search:
+        trap.location_satellites = req['satellites']
+        if req['accuracy'] != 0:
+            trap.location_acc = req['accuracy']
+            trap.location_lat = req['latitude']
+            trap.location_lon = req['longitude']
 
     db.session.commit()
 
     if trap.owner and trap.owner in sockets:
-        sockets[trap.owner].emit('trap-change', trap.to_json())
+        socket.emit('trap-change', trap.to_json(), to=sockets[trap.owner])
+        socket.emit('statistics', make_statistics(
+            trap.owner), to=sockets[trap.owner])
 
-    return jsonify(dict())
+    return jsonify(dict(location_search=trap.location_search))
 
 
-"""@app.route("/api/search_connect", methods=['POST', 'GET'])
-def search_connect():
-    if not request.json:
-        return jsonify({"error": "invalid-json"})
-    # if not validate_mac(request.json['mac']):
-     #   return jsonify({"error": "invalid-mac"})
+def make_statistics(user: int):
+    year = datetime.now().year
+    months = [0] * 12
+    stc: Statistic
+    for stc in Statistic.query.filter_by(user=user):
+        if stc.date.year == year:
+            months[stc.date.month-1] += 1
 
-    mac = request.json['mac'].lower()
-
-    trap = Trap.query.filter_by(mac=mac).first()
-    if not trap:
-        trap = Trap(mac=mac)
-        db.session.add(trap)
-
-    code = ""
-    while True:
-        code = ''.join(random.choice(
-            '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') for _ in range(5))
-        if not Trap.query.filter_by(connect_code=code).first():
-            break
-
-    trap.owner = None
-    trap.connect_expired = datetime.utcnow() + timedelta(minutes=5)
-    trap.connect_code = code
-
-    db.session.commit()
-
-    return jsonify({"error": "ok"})
-"""
+    return months
 
 
 @socket.on('connect')
@@ -103,10 +105,12 @@ def socket_connect():
     if not current_user.is_authenticated:
         return
 
-    sockets[current_user.id] = request.namespace  # type: ignore
+    sockets[current_user.id] = request.sid  # type: ignore
 
     for trap in Trap.query.filter_by(owner=current_user.id):
         emit('trap-change', trap.to_json())
+
+    emit('statistics', make_statistics(current_user.id))
 
 
 @socket.on('disconnect')
@@ -114,7 +118,8 @@ def socket_disconnect():
     if not current_user.is_authenticated:
         return
 
-    del sockets[current_user.id]
+    if current_user.id in sockets:
+        del sockets[current_user.id]
 
 
 @socket.on('token')
@@ -122,5 +127,58 @@ def socket_token(token):
     if not token or not current_user.is_authenticated:
         return
 
-    for trap in Trap.query.filter_by(token=token):
-        emit('trap-change', trap.to_json(True))
+    trap: Trap = Trap.query.filter_by(token=token).first()
+    if not trap or trap.owner == current_user.id:
+        return
+
+    trap.owner = current_user.id
+    trap.owned_date = datetime.now()
+    db.session.commit()
+
+    emit('trap-change', trap.to_json())
+
+
+@socket.on('location-search')
+def socket_location(data):
+    if not data or not current_user.is_authenticated:
+        return
+
+    print(data['id'])
+    trap: Trap = Trap.query.get(data['id'])
+    if not trap or trap.owner != current_user.id:
+        return
+
+    trap.location_search = data['search']
+    db.session.commit()
+
+    emit('trap-change', trap.to_json())
+
+
+@socket.on('delete')
+def socket_delete(data):
+    if not data or not current_user.is_authenticated:
+        return
+
+    print(data['id'])
+    trap: Trap = Trap.query.get(data['id'])
+    if not trap or trap.owner != current_user.id:
+        return
+
+    trap.owner = False
+    db.session.commit()
+
+
+@socket.on('name')
+def socket_name(data):
+    if not data or not current_user.is_authenticated:
+        return
+
+    print(data['id'])
+    trap: Trap = Trap.query.get(data['id'])
+    if not trap or trap.owner != current_user.id:
+        return
+
+    trap.name = data['name']
+    db.session.commit()
+
+    emit('trap-change', trap.to_json())

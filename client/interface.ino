@@ -55,9 +55,7 @@ void interface::beginRemote() {
 	if (!usbSerial)
 		return;
 
-	json req;
-	req["token"] = config.token;
-	remote("set_token", req, null_response, COMMAND_FORCE);
+	sendToken();
 
 	writeLED(COLOR_MAGENTA);
 	remoteReady = true;
@@ -87,15 +85,23 @@ int interface::send(interface::method method, const char* endpoint) {
 		request	 = nullptr;
 		response = cmd_response["body"];
 		return cmd_response["code"];
+	} else if (modemReady) {
+		endRemote();
+		// modem
+		return 0;
 	} else {
 		endRemote();
-		if (!modemReady) {
-			return 0;
-		}
-		// modem
-		return 1;
+		writeLED(COLOR_RED);
+		return 0;
 	}
 }
+
+void interface::sendToken() {
+	json req;
+	req["token"] = config.token;
+	remote("set_token", req, null_response, COMMAND_FORCE);
+}
+
 
 interface::command_status interface::remote(const char* command, json params, json& response, command_flags flags) {
 	bool force = flags & COMMAND_FORCE;
@@ -127,6 +133,8 @@ interface::command_status interface::remote(const char* command, json params, js
 }
 
 interface::command_status interface::modem(const char* request, char* response, command_flags flags) {
+	return STATUS_NOT_READY;
+	/*
 	char   line[lineBuffer];
 	size_t lineLen;
 	char   buf;
@@ -146,7 +154,7 @@ interface::command_status interface::modem(const char* request, char* response, 
 	modemSerial.write("\r\n");
 
 
-	delay(commandDelay * 1000);
+	delay(commandDelay * 1000);*/
 }
 
 interface::command_status interface::modem(const char* request, command_flags flags) {

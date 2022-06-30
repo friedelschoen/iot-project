@@ -88,9 +88,7 @@ class UpdateAccountForm(FlaskForm):
 
 
 class UpdateTrapForm(FlaskForm):
-    mac = StringField('MAC')
     name = StringField('Naam')
-    location = StringField('Locatie')
     submit = SubmitField('Bewerken')
 
 

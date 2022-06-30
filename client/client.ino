@@ -7,18 +7,20 @@
 #include <Sodaq_UBlox_GPS.h>
 #include <Wire.h>
 
-interface		client;
-Sodaq_LSM303AGR accel;
+static interface	   client;
+static Sodaq_LSM303AGR accel;
+static bool			   next_scan, scan;
 
 void (*reset)() = 0;
 
+
 void setup() {
-	pinMode(LED_RED, OUTPUT);
-	pinMode(LED_GREEN, OUTPUT);
-	pinMode(LED_BLUE, OUTPUT);
+	pinMode(ledRed, OUTPUT);
+	pinMode(ledGreen, OUTPUT);
+	pinMode(ledBlue, OUTPUT);
 	pinMode(trapPin, INPUT_PULLUP);
-	pinMode(BATVOLT_PIN, INPUT);
-	pinMode(CHARGER_STATUS, INPUT);
+	pinMode(batteryPin, INPUT);
+	pinMode(chargerPin, INPUT);
 
 	config.open();
 	client.begin();
@@ -26,27 +28,26 @@ void setup() {
 	if (!config.valid)
 		config = config_default;
 
-	client.request["token"]	 = config.token;
-	client.request["domain"] = config.domain;
-	while (!client.send(interface::METHOD_POST, "/api/hello")) {
+	do {
 		writeLED(COLOR_RED);
-		delay(500);
-	}
+		delay(2500);
+		client.request["token"]	 = config.token;
+		client.request["domain"] = config.domain;
+	} while (!client.send(interface::METHOD_POST, "/api/hello"));
+	writeLED(COLOR_WHITE);
+
+	next_scan = scan = (bool) client.request["location_search"];
 
 	bool save = false;
 	if (client.response.hasOwnProperty("token")) {
 		strcpy(config.token, (const char*) client.response["token"]), save = true;
-		json req;
-		req["token"] = config.token;
-		client.remote("set-token", req);
+		client.sendToken();
 	}
 	if (client.response.hasOwnProperty("domain"))
 		strcpy(config.domain, (const char*) client.response["domain"]), save = true;
 
-
 	if (save)
 		config.save();
-
 
 	Wire.begin();
 	delay(1000);
@@ -64,7 +65,7 @@ void loop() {
 	int		   now	= millis();
 
 	if (now - last > statusInterval * 1000) {
-		if (sodaq_gps.scan(true, gpsTimeout * 1000)) {
+		if (scan && sodaq_gps.scan(next_scan, gpsTimeout * 1000)) {
 			client.request["latitude"]	= sodaq_gps.getLat();
 			client.request["longitude"] = sodaq_gps.getLon();
 			client.request["accuracy"]	= getAccuracy();
@@ -73,6 +74,7 @@ void loop() {
 			client.request["longitude"] = 0;
 			client.request["accuracy"]	= 0;
 		}
+		scan = next_scan;
 
 		client.request["token"]		  = config.token;
 		client.request["battery"]	  = batteryVoltage();
@@ -80,14 +82,17 @@ void loop() {
 		client.request["charging"]	  = getCharging();
 		client.request["trap"]		  = getTrapStatus();
 		client.request["satellites"]  = sodaq_gps.getNumberOfSatellites();
+		client.request["searching"]	  = scan;
 
-		client.send(interface::METHOD_POST, "/api/update");
+		if (client.send(interface::METHOD_POST, "/api/update")) {
+			next_scan = (bool) client.response["location_search"];
+		}
 		last = now;
 	}
 }
 
 int batteryVoltage() {
-	return batteryFactor * analogRead(BATVOLT_PIN);
+	return batteryFactor * analogRead(batteryPin);
 }
 
 double getAccuracy() {	  // -> 100% the best, 0% the worst
@@ -102,5 +107,5 @@ bool getTrapStatus() {
 }
 
 bool getCharging() {
-	return digitalRead(CHARGER_STATUS);
+	return digitalRead(chargerPin);
 }
