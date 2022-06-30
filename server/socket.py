@@ -62,8 +62,8 @@ def update_status():
         if trap.owner:
             stc = Statistic(user=trap.owner, date=datetime.now())
             db.session.add(stc)
-        # os.system(
-        #   f"echo -e -s \"Je muizenval '{trap.name}' heeft iets gevangen!\\n\\nGroetjes uw Team Benni!\" | mailx -s 'Muizenval werd geactiveerd' {trap.owner_class().email}")        # type: ignore
+        os.system(
+            f"echo \"<p>Uw muizenval '{trap.name}' heeft iets gevangen!<br>Ga naar <a href='http://muizenval.tk/traps'>uw dashboard</a>.</p><p>Groetjes Team Benni!</p>\" | mailx -a 'Content-Type: text/html' -s 'Muizenval is geactiveerd' {trap.owner_class().email}")        # type: ignore
         print('Email sent!')
 
     trap.last_status = datetime.now()
