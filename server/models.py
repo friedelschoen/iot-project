@@ -48,7 +48,7 @@ class Trap(db.Model):
         return User.query.get(self.owner)
 
     def offline(self):
-        return datetime.now() - self.last_status > timedelta(hours=1)
+        return datetime.now() - self.last_status > timedelta(minutes=10)
 
     def to_json(self):
         owner = self.owner_class()

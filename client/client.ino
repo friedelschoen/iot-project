@@ -89,6 +89,7 @@ void loop() {
 		}
 		last = now;
 	}
+	delay(loopDelay * 1000);
 }
 
 int batteryVoltage() {
